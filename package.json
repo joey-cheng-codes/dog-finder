@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server/server.js",
     "dev": "webpack-dev-server --open & nodemon server/server.js",
-    "build": "NODE_ENV=production webpack"
+    "build": "NODE_ENV=production webpack npx tailwindcss -i src/styles.css -o build/output.css --watch"
   },
   "author": "Joey Cheng",
   "license": "ISC",
