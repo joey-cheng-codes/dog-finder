@@ -5,8 +5,8 @@ module.exports = {
   mode: process.env.NODE_ENV || 'development',
   entry: './src/index.js',
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'build')
+    path: path.resolve(__dirname, './build'),
+    filename: 'bundle.js'
   },
   plugins: [new HtmlWebpackPlugin({
     filename: 'index.html',
@@ -46,7 +46,7 @@ module.exports = {
         use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
-        test: /\.(png|jpg|jpeg|gif)$/,
+        test: /\.(svg|png|jpg|jpeg|gif)$/,
         loader: 'file-loader'
       },
     ]
