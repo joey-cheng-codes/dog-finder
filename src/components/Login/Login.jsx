@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import fetchLogo from '../../images/fetch-rewards-logo@logotyp.us.svg'
-import { redirect } from 'react-router-dom';
+// import { redirect, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
-
+  // const navigate = useNavigate();
   const loginHandler = async (e) => {
     e.preventDefault();
     try {
@@ -23,6 +23,8 @@ const Login = () => {
       });
       if (response.ok) {
         window.location.replace('/home')
+        // return redirect('/home');
+        // navigate('/home');
       }
     }
     catch (err) {
@@ -42,7 +44,7 @@ const Login = () => {
     <div>
       {/* <html className="h-full bg-white">
         <body className="h-full"> */}
-      < div data-theme='light' >
+      <div data-theme='light' >
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             <img className="mx-auto h-100 w-auto" src={fetchLogo} alt="Fetch Rewards" />
