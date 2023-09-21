@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
 const Filter = () => {
-  const [dogList, setDogList] = useState([]);
+  const [dogList, setDogList] = useState([]); // breed drop down
+  const [getDogInfo, setGetDogInfo] = useState([]); // dog info (all info)
+  const [searchResult, setSearchResult] = useState([]); // display search result that contains next, resultIds, total
   useEffect(() => {
     const getBreeds = async () => {
       try {
@@ -21,12 +23,62 @@ const Filter = () => {
 
     getBreeds();
   }, []);
-
+  // breed dropdown list
   const listDog = (dog, index) => {
     return (
       <li>
         <button key={index} type="button" className="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{dog}</button>
       </li>
+    )
+  }
+  // get next, prev, total and resultIds of the dog filter. 
+  const filteredDogs = async () => {
+    try {
+      const response = await fetch('https://frontend-take-home-service.fetch.com/dogs/search', {
+        method: 'GET',
+        credentials: 'include',
+      })
+      const data = await response.json();
+      if (response.ok) {
+        setSearchResult(data);
+        console.log(data, 'searchResult')
+        // display the dog info from the id 
+        return getDogs();
+      }
+    }
+    catch (err) {
+      console.error(err, 'failed to filter dogs result')
+    }
+  };
+  // give the ids of the dogs of interest? 
+  const getDogs = async () => {
+    try {
+      const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({
+          // resultIds: searchResult.resultIds,
+          resultIds: ['jnGFTIcBOvEgQ5OCx40W', 'VXGFTIcBOvEgQ5OCx40W']
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data, 'data from getDogs ********')
+        setGetDogInfo(data);
+        console.log(getDogInfo, 'will you give me the getdoginfo???')
+        return getDogInfo;
+      }
+    }
+    catch (err) {
+      console.error(err, 'error getting dogs')
+    }
+  }
+  const displayDog = (id, index) => {
+    return (
+      <div key={index}>hello{id}</div>
     )
   }
 
@@ -61,7 +113,12 @@ const Filter = () => {
           </div>
         </div>
       </form>
-
+      <button onClick={filteredDogs}>get search results</button>
+      {getDogInfo.map((id, index) => {
+        return (
+          displayDog(id, index)
+        )
+      })}
     </div>
   )
 };
