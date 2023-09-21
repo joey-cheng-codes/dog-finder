@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 const Filter = () => {
   const [dogList, setDogList] = useState([]); // breed drop down
   const [getDogInfo, setGetDogInfo] = useState([]); // dog info (all info)
-  const [searchResult, setSearchResult] = useState([]); // display search result that contains next, resultIds, total
+  const [searchResult, setSearchResult] = useState({}); // display search result that contains next, resultIds, total
   useEffect(() => {
     const getBreeds = async () => {
       try {
         const response = await fetch('https://frontend-take-home-service.fetch.com/dogs/breeds', {
           method: 'GET',
-          credentials: 'include'
+          credentials: 'include',
         })
         const data = await response.json();
         if (response.ok) {
@@ -31,10 +31,43 @@ const Filter = () => {
       </li>
     )
   }
+
+  const dogSample = [{
+    age: 10,
+    breed: "Chihuahua",
+    id: "jnGFTIcBOvEgQ5OCx40W",
+    img:
+      "https://frontend-take-home.fetch.com/dog-images/n02085620-Chihuahua/n02085620_2973.jpg",
+    name:
+      "Laurianne",
+    zip_code:
+      "67218"
+  }]
+
+  // {
+  //   age: 10,
+  //   breed: "Chihuahua",
+  //   id: "VXGFTIcBOvEgQ5OCx40W",
+  //   img: "https://frontend-take-home.fetch.com/dog-images/n02085620-Chihuahua/n02085620_10976.jpg",
+  //   name: "Emory",
+  //   zip_code: "48333"
+  // }
+  const testSample = dogSample.map((obj) => {
+    return obj.id;
+  })
+
+  const breedSample = dogSample.map((obj) => {
+    return obj.breed;
+  })
   // get next, prev, total and resultIds of the dog filter. 
   const filteredDogs = async () => {
     try {
-      const response = await fetch('https://frontend-take-home-service.fetch.com/dogs/search', {
+      // const ids = ['jnGFTIcBOvEgQ5OCx40W'];
+      // const queryString = '?breeds=' + encodeURIComponent(JSON.stringify(ids));
+
+      const new_params = new URLSearchParams(`breeds=${[...breedSample]}`);
+      // console.log(new_params)
+      const response = await fetch(`https://frontend-take-home-service.fetch.com/dogs/search?${new_params}`, {
         method: 'GET',
         credentials: 'include',
       })
@@ -43,23 +76,27 @@ const Filter = () => {
         setSearchResult(data);
         console.log(data, 'searchResult')
         // display the dog info from the id 
-        return getDogs();
+        return getDogs(searchResult);
       }
     }
     catch (err) {
       console.error(err, 'failed to filter dogs result')
     }
   };
+
   // give the ids of the dogs of interest? 
-  const getDogs = async () => {
+  const getDogs = async (searchResult) => {
+
     try {
+      console.log(testSample, 'are you gonna give me an array')
+      const arr = await searchResult.resultIds;
+      console.log(arr, ' arr of dog ids*********')
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({
-          // resultIds: searchResult.resultIds,
-          resultIds: ['jnGFTIcBOvEgQ5OCx40W', 'VXGFTIcBOvEgQ5OCx40W']
-        }),
+        body: JSON.stringify(
+          testSample// arr of ids 
+        ),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -68,17 +105,19 @@ const Filter = () => {
       if (response.ok) {
         console.log(data, 'data from getDogs ********')
         setGetDogInfo(data);
-        console.log(getDogInfo, 'will you give me the getdoginfo???')
-        return getDogInfo;
+        // console.log(getDogInfo, 'will you give me the getdoginfo???')
+        // return getDogInfo;
       }
     }
     catch (err) {
       console.error(err, 'error getting dogs')
     }
   }
-  const displayDog = (id, index) => {
+  const displayDog = (dogObj, index) => {
     return (
-      <div key={index}>hello{id}</div>
+      <div><h2 key={index}>hello {dogObj.id}</h2>
+        <img src={dogObj.img} />
+      </div>
     )
   }
 
@@ -114,9 +153,9 @@ const Filter = () => {
         </div>
       </form>
       <button onClick={filteredDogs}>get search results</button>
-      {getDogInfo.map((id, index) => {
+      {getDogInfo.map((dogObj, index) => {
         return (
-          displayDog(id, index)
+          displayDog(dogObj, index)
         )
       })}
     </div>
