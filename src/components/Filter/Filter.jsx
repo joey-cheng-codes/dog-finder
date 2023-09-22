@@ -1,9 +1,46 @@
 import React, { useState, useEffect } from 'react';
+import 'flowbite';
 
 const Filter = () => {
   const [dogList, setDogList] = useState([]); // breed drop down
   const [getDogInfo, setGetDogInfo] = useState([]); // dog info (all info)
   const [searchResult, setSearchResult] = useState({}); // display search result that contains next, resultIds, total
+
+  const [breedSearchQuery, setBreedSearchQuery] = useState('');
+  const [checkedBreeds, setCheckedBreeds] = useState([]);
+  const [filteredBreeds, setFilteredBreeds] = useState([]); // for the search bar .. 
+  // Function to handle format search input to account for uppercasing first letter. 
+  const capitalizeFirstLetter = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+  // Function to handle search input changes for breeds
+  const handleSearchInputChange = (e) => {
+    const query = capitalizeFirstLetter(e.target.value);
+    setBreedSearchQuery(query);
+
+    // Filter breeds based on the search query.
+    const filtered = breeds.filter((breed) => breed.includes(query));
+    setFilteredBreeds(filtered);
+  };
+
+  const breeds = dogList; // will probably have to wait for the breeds info to be 
+
+  //Update this array of checked breeds 
+  const handleCheckedBreeds = (e) => {
+    //unchecking a box
+    let breedName = e.target.value
+    if (checkedBreeds.includes(breedName)) {
+      setCheckedBreeds(checkedBreeds.filter((breed) => {
+        return breed !== breedName
+      }))
+    }
+    //checking a box
+    else {
+      setCheckedBreeds([...checkedBreeds, breedName]);
+    }
+  }
+
+
   useEffect(() => {
     const getBreeds = async () => {
       try {
@@ -27,8 +64,12 @@ const Filter = () => {
   const listDog = (dog, index) => {
     return (
       <li>
-        <button key={index} type="button" className="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{dog}</button>
+        <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+          <input key={index} id="checkbox-item-11" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+          <label htmlFor="checkbox-item-11" className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{dog}</label>
+        </div>
       </li>
+
     )
   }
 
@@ -44,14 +85,6 @@ const Filter = () => {
       "67218"
   }]
 
-  // {
-  //   age: 10,
-  //   breed: "Chihuahua",
-  //   id: "VXGFTIcBOvEgQ5OCx40W",
-  //   img: "https://frontend-take-home.fetch.com/dog-images/n02085620-Chihuahua/n02085620_10976.jpg",
-  //   name: "Emory",
-  //   zip_code: "48333"
-  // }
   const testSample = dogSample.map((obj) => {
     return obj.id;
   })
@@ -123,42 +156,35 @@ const Filter = () => {
 
   return (
     <div >
-      <h1 className="text-3xl font-bold underline">
-        Hello World
-      </h1>
-      <form>
-        <div className="flex">
-          <label htmlFor="search-dropdown" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Your Email</label>
-          <button id="dropdown-button" data-dropdown-toggle="dropdown" className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600" type="button">Select A Breed <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-          </svg></button>
-          <div id="dropdown" className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-              {dogList.map((dog, index) => {
-                return (
-                  listDog(dog, index)
-                )
-              })}
-            </ul>
-          </div>
-          <div className="relative w-full">
-            <input type="search" id="search-dropdown" className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg border-l-gray-50 border-l-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-l-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Search Dogs..." required />
-            <button type="submit" className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-r-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-              <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+      <h2 className="text-2xl font-bold">
+        Share your dog preferences and get matched!
+      </h2>
+      <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Select Breeds <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+      </svg></button>
+
+      {/* <!-- Dropdown menu --> */}
+      <div id="dropdownSearch" className="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+        <div className="p-3">
+          <label htmlFor="input-group-search" className="sr-only">Search</label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
               </svg>
-              <span className="sr-only">Search</span>
-            </button>
+            </div>
+            <input type="text" id="input-group-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search breed type" onChange={handleSearchInputChange} value={breedSearchQuery} />
           </div>
         </div>
-      </form>
-      <button onClick={filteredDogs}>get search results</button>
-      {getDogInfo.map((dogObj, index) => {
-        return (
-          displayDog(dogObj, index)
-        )
-      })}
-    </div>
+        <ul className="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButton">
+          {dogList.map((dog, index) => {
+            return (
+              listDog(dog, index)
+            )
+          })}
+        </ul>
+      </div>
+    </div >
   )
 };
 
