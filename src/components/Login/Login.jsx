@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import fetchLogo from '../../images/fetch-rewards-logo@logotyp.us.svg'
+import fetchLogo from '../../images/fetch-rewards-logo@logotyp.us.svg';
 // import { redirect, useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -22,16 +22,16 @@ const Login = () => {
         },
       });
       if (response.ok) {
-        window.location.replace('/home')
+        window.location.replace('/home');
         // return redirect('/home');
         // navigate('/home');
       }
     }
     catch (err) {
-      console.error(err, 'something went wrong')
-      window.location.replace('/')
+      console.error(err, 'something went wrong');
+      window.location.replace('/');
     }
-  }
+  };
 
   const handleEmail = (e) => {
     return setEmail(e.target.value);
@@ -78,7 +78,7 @@ const Login = () => {
         </div>
       </div >
     </div >
-  )
-}
+  );
+};
 
 export default Login;

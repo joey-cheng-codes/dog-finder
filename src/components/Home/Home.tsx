@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Filter from '../Filter/Filter.jsx';
 
 const Home = () => {
@@ -7,7 +7,7 @@ const Home = () => {
     <div>
       <Filter />
     </div>
-  )
+  );
 };
 
 export default Home;

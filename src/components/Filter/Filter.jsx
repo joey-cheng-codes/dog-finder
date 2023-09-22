@@ -28,17 +28,17 @@ const Filter = () => {
   //Update this array of checked breeds 
   const handleCheckedBreeds = (e) => {
     //unchecking a box
-    let breedName = e.target.value
+    let breedName = e.target.value;
     if (checkedBreeds.includes(breedName)) {
       setCheckedBreeds(checkedBreeds.filter((breed) => {
-        return breed !== breedName
-      }))
+        return breed !== breedName;
+      }));
     }
     //checking a box
     else {
       setCheckedBreeds([...checkedBreeds, breedName]);
     }
-  }
+  };
 
 
   useEffect(() => {
@@ -47,16 +47,16 @@ const Filter = () => {
         const response = await fetch('https://frontend-take-home-service.fetch.com/dogs/breeds', {
           method: 'GET',
           credentials: 'include',
-        })
+        });
         const data = await response.json();
         if (response.ok) {
           setDogList(data);
         }
       }
       catch (err) {
-        console.error(err, 'could not get breed information')
+        console.error(err, 'could not get breed information');
       }
-    }
+    };
 
     getBreeds();
   }, []);
@@ -70,28 +70,28 @@ const Filter = () => {
         </div>
       </li>
 
-    )
-  }
+    );
+  };
 
   const dogSample = [{
     age: 10,
-    breed: "Chihuahua",
-    id: "jnGFTIcBOvEgQ5OCx40W",
+    breed: 'Chihuahua',
+    id: 'jnGFTIcBOvEgQ5OCx40W',
     img:
-      "https://frontend-take-home.fetch.com/dog-images/n02085620-Chihuahua/n02085620_2973.jpg",
+      'https://frontend-take-home.fetch.com/dog-images/n02085620-Chihuahua/n02085620_2973.jpg',
     name:
-      "Laurianne",
+      'Laurianne',
     zip_code:
-      "67218"
-  }]
+      '67218'
+  }];
 
   const testSample = dogSample.map((obj) => {
     return obj.id;
-  })
+  });
 
   const breedSample = dogSample.map((obj) => {
     return obj.breed;
-  })
+  });
   // get next, prev, total and resultIds of the dog filter. 
   const filteredDogs = async () => {
     try {
@@ -103,17 +103,17 @@ const Filter = () => {
       const response = await fetch(`https://frontend-take-home-service.fetch.com/dogs/search?${new_params}`, {
         method: 'GET',
         credentials: 'include',
-      })
+      });
       const data = await response.json();
       if (response.ok) {
         setSearchResult(data);
-        console.log(data, 'searchResult')
+        console.log(data, 'searchResult');
         // display the dog info from the id 
         return getDogs(searchResult);
       }
     }
     catch (err) {
-      console.error(err, 'failed to filter dogs result')
+      console.error(err, 'failed to filter dogs result');
     }
   };
 
@@ -121,9 +121,9 @@ const Filter = () => {
   const getDogs = async (searchResult) => {
 
     try {
-      console.log(testSample, 'are you gonna give me an array')
+      console.log(testSample, 'are you gonna give me an array');
       const arr = await searchResult.resultIds;
-      console.log(arr, ' arr of dog ids*********')
+      console.log(arr, ' arr of dog ids*********');
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
         method: 'POST',
         credentials: 'include',
@@ -133,26 +133,26 @@ const Filter = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-      })
+      });
       const data = await response.json();
       if (response.ok) {
-        console.log(data, 'data from getDogs ********')
+        console.log(data, 'data from getDogs ********');
         setGetDogInfo(data);
         // console.log(getDogInfo, 'will you give me the getdoginfo???')
         // return getDogInfo;
       }
     }
     catch (err) {
-      console.error(err, 'error getting dogs')
+      console.error(err, 'error getting dogs');
     }
-  }
+  };
   const displayDog = (dogObj, index) => {
     return (
       <div><h2 key={index}>hello {dogObj.id}</h2>
         <img src={dogObj.img} />
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div >
@@ -180,12 +180,12 @@ const Filter = () => {
           {dogList.map((dog, index) => {
             return (
               listDog(dog, index)
-            )
+            );
           })}
         </ul>
       </div>
     </div >
-  )
+  );
 };
 
 export default Filter;
