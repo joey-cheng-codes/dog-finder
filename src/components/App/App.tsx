@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Login from '../Login/Login.jsx';
-import Home from '../Home/Home.jsx';
-import NoMatch from '../NoMatch/NoMatch.jsx';
+import Home from '../Home/Home'
+import NoMatch from '../NoMatch/NoMatch';
 
 const App = () => {
 
