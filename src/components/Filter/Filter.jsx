@@ -2,43 +2,44 @@ import React, { useState, useEffect } from 'react';
 import 'flowbite';
 
 const Filter = () => {
-  const [dogList, setDogList] = useState([]); // breed drop down
+  const [dogList, setDogList] = useState([]); // breed drop down 
   const [getDogInfo, setGetDogInfo] = useState([]); // dog info (all info)
   const [searchResult, setSearchResult] = useState({}); // display search result that contains next, resultIds, total
 
   const [breedSearchQuery, setBreedSearchQuery] = useState('');
-  const [checkedBreeds, setCheckedBreeds] = useState([]);
-  const [filteredBreeds, setFilteredBreeds] = useState([]); // for the search bar .. 
-  // Function to handle format search input to account for uppercasing first letter. 
-  const capitalizeFirstLetter = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-  // Function to handle search input changes for breeds
+  const [displayResult, setDisplayResult] = useState([]) // dogs of interest 
+  const [filteredBreeds, setFilteredBreeds] = useState([]); // for the search bar ..
+  const [zip, setZip] = useState('');
+  const [zipcodeArray, setZipcodeArray] = useState([]) // for zip code entries 
+
+  const checkedBreeds = new Map(); // for keeping track of what has been checked marked on breeds. 
   const handleSearchInputChange = (e) => {
-    const query = capitalizeFirstLetter(e.target.value);
+    const query = e.target.value
     setBreedSearchQuery(query);
 
     // Filter breeds based on the search query.
-    const filtered = breeds.filter((breed) => breed.includes(query));
+    const filtered = breeds.filter((breed) => breed.toLowerCase().includes(query.toLowerCase()));
+
     setFilteredBreeds(filtered);
   };
 
-  const breeds = dogList; // will probably have to wait for the breeds info to be 
+  const breeds = dogList;
 
-  //Update this array of checked breeds 
+  //Update this object of checked breeds 
   const handleCheckedBreeds = (e) => {
     //unchecking a box
-    let breedName = e.target.value;
-    if (checkedBreeds.includes(breedName)) {
-      setCheckedBreeds(checkedBreeds.filter((breed) => {
-        return breed !== breedName;
-      }));
+    console.log(e.target.name, 'handleCheckedBreeds')
+    let breedName = e.target.name;
+    // if the dog breed is already in the object, we will be unchecking it by setting it to false.  
+    if (checkedBreeds.get(breedName)) {
+      checkedBreeds.delete(breedName);
     }
     //checking a box
     else {
-      setCheckedBreeds([...checkedBreeds, breedName]);
+      checkedBreeds.set(breedName, true);
     }
   };
+
 
 
   useEffect(() => {
@@ -51,6 +52,7 @@ const Filter = () => {
         const data = await response.json();
         if (response.ok) {
           setDogList(data);
+          setFilteredBreeds(data);
         }
       }
       catch (err) {
@@ -65,7 +67,7 @@ const Filter = () => {
     return (
       <li>
         <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-          <input key={index} id="checkbox-item-11" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+          <input key={index} id="checkbox-item-11" type="checkbox" value="" name={dog} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" onClick={handleCheckedBreeds} />
           <label htmlFor="checkbox-item-11" className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{dog}</label>
         </div>
       </li>
@@ -85,21 +87,29 @@ const Filter = () => {
       '67218'
   }];
 
-  const testSample = dogSample.map((obj) => {
-    return obj.id;
-  });
+  // input field for zip code handler
+  const handleZipcodeInput = (e) => {
+    setZip(e.target.value);
+  }
 
-  const breedSample = dogSample.map((obj) => {
-    return obj.breed;
-  });
   // get next, prev, total and resultIds of the dog filter. 
   const filteredDogs = async () => {
     try {
       // const ids = ['jnGFTIcBOvEgQ5OCx40W'];
       // const queryString = '?breeds=' + encodeURIComponent(JSON.stringify(ids));
-
-      const new_params = new URLSearchParams(`breeds=${[...breedSample]}`);
-      // console.log(new_params)
+      const breedResult = Array.from(checkedBreeds.keys());
+      console.log(breedResult, ' breedResult');
+      let new_params = '';
+      if (breedResult.length !== 0) {
+        new_params = new URLSearchParams(`breeds=${[...breedResult]}`);
+      }
+      const validZipTest = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
+      if (validZipTest.test(zip)) {
+        setZipcodeArray(...zipcodeArray, zip);
+      }
+      else {
+        alert('invalid zip code entry');
+      }
       const response = await fetch(`https://frontend-take-home-service.fetch.com/dogs/search?${new_params}`, {
         method: 'GET',
         credentials: 'include',
@@ -109,7 +119,7 @@ const Filter = () => {
         setSearchResult(data);
         console.log(data, 'searchResult');
         // display the dog info from the id 
-        return getDogs(searchResult);
+        return getDogs(data);
       }
     }
     catch (err) {
@@ -121,15 +131,12 @@ const Filter = () => {
   const getDogs = async (searchResult) => {
 
     try {
-      console.log(testSample, 'are you gonna give me an array');
       const arr = await searchResult.resultIds;
       console.log(arr, ' arr of dog ids*********');
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify(
-          testSample// arr of ids 
-        ),
+        body: JSON.stringify(arr),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -138,8 +145,6 @@ const Filter = () => {
       if (response.ok) {
         console.log(data, 'data from getDogs ********');
         setGetDogInfo(data);
-        // console.log(getDogInfo, 'will you give me the getdoginfo???')
-        // return getDogInfo;
       }
     }
     catch (err) {
@@ -177,13 +182,29 @@ const Filter = () => {
           </div>
         </div>
         <ul className="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButton">
-          {dogList.map((dog, index) => {
+          {/* updates the search bar as you type in the breed of interest */}
+          {filteredBreeds.map((dog, index) => {
             return (
               listDog(dog, index)
             );
           })}
         </ul>
       </div>
+      <div>
+        <button onClick={() => { filteredDogs() }} className="btn btn-wide">show me my matches</button>
+      </div>
+      <div className="form-control w-full max-w-xs">
+        <label className="label">
+          <span className="label-text">Filter dogs by zipcode(s)</span>
+        </label>
+        <input onChange={handleZipcodeInput} value={zip} type="text" pattern="[0-9]{5}" placeholder="zipcode" className="input input-bordered w-full max-w-xs" />
+        {/* <label className="label"> */}
+        {/* <span className="label-text-alt">Previous entries:</span> */}
+        {/* <span className="label-text-alt">Bottom Right label</span> */}
+        {/* </label> */}
+        {/* <button>Filter by Zipcode(s)</button> */}
+      </div>
+      {getDogInfo.length > 0 && (getDogInfo.map(displayDog))}
     </div >
   );
 };
