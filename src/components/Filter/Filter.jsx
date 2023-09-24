@@ -9,8 +9,11 @@ const Filter = () => {
   const [breedSearchQuery, setBreedSearchQuery] = useState('');
   const [displayResult, setDisplayResult] = useState([]) // dogs of interest 
   const [filteredBreeds, setFilteredBreeds] = useState([]); // for the search bar ..
+
   const [zip, setZip] = useState('');
-  const [zipcodeArray, setZipcodeArray] = useState([]) // for zip code entries 
+
+  const [minAge, setMinAge] = useState();
+  const [maxAge, setMaxAge] = useState();
 
   const checkedBreeds = new Map(); // for keeping track of what has been checked marked on breeds. 
   const handleSearchInputChange = (e) => {
@@ -28,7 +31,6 @@ const Filter = () => {
   //Update this object of checked breeds 
   const handleCheckedBreeds = (e) => {
     //unchecking a box
-    console.log(e.target.name, 'handleCheckedBreeds')
     let breedName = e.target.name;
     // if the dog breed is already in the object, we will be unchecking it by setting it to false.  
     if (checkedBreeds.get(breedName)) {
@@ -92,33 +94,41 @@ const Filter = () => {
     setZip(e.target.value);
   }
 
+  //age 
+  const handleMinAgeInput = (e) => {
+    setMinAge(e.target.value);
+  }
+  const handleMaxAgeInput = (e) => {
+    setMaxAge(e.target.value);
+  }
+
   // get next, prev, total and resultIds of the dog filter. 
-  const filteredDogs = async () => {
+  const filteredDogs = async (e) => {
+    e.preventDefault();
     try {
-      // const ids = ['jnGFTIcBOvEgQ5OCx40W'];
-      // const queryString = '?breeds=' + encodeURIComponent(JSON.stringify(ids));
+      const params = {};
       const breedResult = Array.from(checkedBreeds.keys());
-      console.log(breedResult, ' breedResult');
-      let new_params = '';
       if (breedResult.length !== 0) {
-        new_params = new URLSearchParams(`breeds=${[...breedResult]}`);
+        params['breeds'] = [...breedResult]
       }
       const validZipTest = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
       if (validZipTest.test(zip)) {
-        setZipcodeArray(...zipcodeArray, zip);
+        params.zipCodes = [zip];
       }
-      else {
+      else if (zip !== '') {
         alert('invalid zip code entry');
       }
-      const response = await fetch(`https://frontend-take-home-service.fetch.com/dogs/search?${new_params}`, {
+
+      const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
+      const paramsEnd = encodeGetParams(params);
+
+      const response = await fetch(`https://frontend-take-home-service.fetch.com/dogs/search?${paramsEnd}`, {
         method: 'GET',
         credentials: 'include',
       });
       const data = await response.json();
       if (response.ok) {
         setSearchResult(data);
-        console.log(data, 'searchResult');
-        // display the dog info from the id 
         return getDogs(data);
       }
     }
@@ -132,7 +142,6 @@ const Filter = () => {
 
     try {
       const arr = await searchResult.resultIds;
-      console.log(arr, ' arr of dog ids*********');
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
         method: 'POST',
         credentials: 'include',
@@ -153,7 +162,7 @@ const Filter = () => {
   };
   const displayDog = (dogObj, index) => {
     return (
-      <div><h2 key={index}>hello {dogObj.id}</h2>
+      <div><h2 key={index}>hello {dogObj.id} {dogObj.age}</h2>
         <img src={dogObj.img} />
       </div>
     );
@@ -190,20 +199,28 @@ const Filter = () => {
           })}
         </ul>
       </div>
-      <div>
-        <button onClick={() => { filteredDogs() }} className="btn btn-wide">show me my matches</button>
-      </div>
-      <div className="form-control w-full max-w-xs">
-        <label className="label">
-          <span className="label-text">Filter dogs by zipcode(s)</span>
-        </label>
-        <input onChange={handleZipcodeInput} value={zip} type="text" pattern="[0-9]{5}" placeholder="zipcode" className="input input-bordered w-full max-w-xs" />
-        {/* <label className="label"> */}
-        {/* <span className="label-text-alt">Previous entries:</span> */}
-        {/* <span className="label-text-alt">Bottom Right label</span> */}
-        {/* </label> */}
-        {/* <button>Filter by Zipcode(s)</button> */}
-      </div>
+      <form onSubmit={filteredDogs}>
+        <div className="form-control w-full max-w-xs">
+          {/* zipcode */}
+          <label className="label">
+            <span className="label-text">Filter dogs by zipcode</span>
+          </label>
+          <input onChange={handleZipcodeInput} value={zip} type="text" pattern="[0-9]{5}" placeholder="zipcode" className="input input-bordered w-full max-w-xs" />
+          {/* min age */}
+          <label className="label">
+            <span className="label-text">Min Age Requirement</span>
+          </label>
+          <input onChange={handleMinAgeInput} value={minAge} type="text" pattern="[0-9]{2}" placeholder="minimum age" className="input input-bordered w-full max-w-xs" />
+          {/* max age */}
+          <label className="label">
+            <span className="label-text">Max Age Requirement</span>
+          </label>
+          <input onChange={handleMaxAgeInput} value={maxAge} type="text" pattern="[0-9]{2}" placeholder="maxiumum age" className="input input-bordered w-full max-w-xs" />
+        </div>
+        <div>
+          <button type='submit' className="btn btn-wide">show me my matches</button>
+        </div>
+      </form>
       {getDogInfo.length > 0 && (getDogInfo.map(displayDog))}
     </div >
   );
