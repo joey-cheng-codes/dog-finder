@@ -15,6 +15,8 @@ const Filter = () => {
   const [minAge, setMinAge] = useState();
   const [maxAge, setMaxAge] = useState();
 
+  const [size, setSize] = useState(25);
+
   const checkedBreeds = new Map(); // for keeping track of what has been checked marked on breeds. 
   const handleSearchInputChange = (e) => {
     const query = e.target.value
@@ -102,38 +104,66 @@ const Filter = () => {
     setMaxAge(e.target.value);
   }
 
+  // next page
+  const handleNextPage = (e) => {
+    e.preventDefault();
+    return filteredDogs(e, searchResult.next)
+  }
+
   // get next, prev, total and resultIds of the dog filter. 
-  const filteredDogs = async (e) => {
+  const filteredDogs = async (e, paramsEnd = 'dogs/search?') => {
     e.preventDefault();
     try {
-      const params = {};
-      const breedResult = Array.from(checkedBreeds.keys());
-      if (breedResult.length !== 0) {
-        params['breeds'] = [...breedResult]
-      }
-      const validZipTest = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
-      if (validZipTest.test(zip)) {
-        params.zipCodes = [zip];
-      }
-      else if (zip !== '') {
-        alert('invalid zip code entry');
+      if (paramsEnd !==
+        '') {
+        const params = {};
+
+        const breedResult = Array.from(checkedBreeds.keys());
+        if (breedResult.length !== 0) {
+          params.breeds = breedResult;
+        }
+        const validZipTest = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
+        if (validZipTest.test(zip)) {
+          params.zipCodes = [zip];
+        }
+        else if (zip !== '') {
+          alert('invalid zip code entry');
+        }
+
+        if (minAge >= 0) {
+          params.ageMin = minAge;
+        }
+
+        if (maxAge > 0) {
+          params.ageMax = maxAge;
+        }
+
+        if (size < 25) {
+          params.size = size;
+        }
+        const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
+
+        paramsEnd = 'dogs/search?' + encodeGetParams(params);
+
       }
 
-      const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
-      const paramsEnd = encodeGetParams(params);
-
-      const response = await fetch(`https://frontend-take-home-service.fetch.com/dogs/search?${paramsEnd}`, {
+      const response = await fetch(`https://frontend-take-home-service.fetch.com/${paramsEnd}`, {
         method: 'GET',
         credentials: 'include',
       });
       const data = await response.json();
       if (response.ok) {
         setSearchResult(data);
+        console.log(paramsEnd, 'what does params look like?')
+        console.log(data, 'what does searchResult look like?????')
+        if (Object.keys(data).length === 0) {
+          console.log('No matches found based on your search criteria. Please try again.')
+        }
         return getDogs(data);
       }
     }
     catch (err) {
-      console.error(err, 'failed to filter dogs result');
+      console.error(err, 'An error has occured. Failed to filter dogs result.');
     }
   };
 
@@ -199,7 +229,7 @@ const Filter = () => {
           })}
         </ul>
       </div>
-      <form onSubmit={filteredDogs}>
+      <form onSubmit={(e) => filteredDogs(e, paramsEnd)}>
         <div className="form-control w-full max-w-xs">
           {/* zipcode */}
           <label className="label">
@@ -210,18 +240,43 @@ const Filter = () => {
           <label className="label">
             <span className="label-text">Min Age Requirement</span>
           </label>
-          <input onChange={handleMinAgeInput} value={minAge} type="text" pattern="[0-9]{2}" placeholder="minimum age" className="input input-bordered w-full max-w-xs" />
+          <input onChange={handleMinAgeInput} value={minAge} type="number" min="0" max="99" placeholder="minimum age" className="input input-bordered w-full max-w-xs" />
           {/* max age */}
           <label className="label">
             <span className="label-text">Max Age Requirement</span>
           </label>
-          <input onChange={handleMaxAgeInput} value={maxAge} type="text" pattern="[0-9]{2}" placeholder="maxiumum age" className="input input-bordered w-full max-w-xs" />
+          <input onChange={handleMaxAgeInput} value={maxAge} type="number" min="0" max="99" placeholder="maxiumum age" className="input input-bordered w-full max-w-xs" />
         </div>
         <div>
           <button type='submit' className="btn btn-wide">show me my matches</button>
         </div>
       </form>
       {getDogInfo.length > 0 && (getDogInfo.map(displayDog))}
+      {/* Pagination starts */}
+      <div className="flex flex-col items-center">
+        {/* <!-- Help text --> */}
+        <span className="text-sm text-gray-700 dark:text-gray-400">
+          Showing <span className="font-semibold text-gray-900 dark:text-white">1</span> to <span className="font-semibold text-gray-900 dark:text-white">25
+          </span> of <span className="font-semibold text-gray-900 dark:text-white">{searchResult.total}</span> Entries
+        </span>
+        <div className="inline-flex mt-2 xs:mt-0">
+          {/* <!-- Buttons --> */}
+          <button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            <svg className="w-3.5 h-3.5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5H1m0 0 4 4M1 5l4-4" />
+            </svg>
+            Prev
+          </button>
+          <button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" onClick={(e) => { handleNextPage(e) }}>
+            Next
+            <svg className="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+            </svg>
+          </button>
+        </div>
+        {/* Pagination ends */}
+      </div>
+
     </div >
   );
 };
