@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import 'flowbite';
 
 const Filter = () => {
@@ -16,8 +16,9 @@ const Filter = () => {
   const [maxAge, setMaxAge] = useState();
 
   const [size, setSize] = useState(25);
+  const [from, setFrom] = useState(0);
 
-  const checkedBreeds = new Map(); // for keeping track of what has been checked marked on breeds. 
+  const checkedBreeds = useMemo(() => new Map(), []); // for keeping track of what has been checked marked on breeds. 
   const handleSearchInputChange = (e) => {
     const query = e.target.value
     setBreedSearchQuery(query);
@@ -29,6 +30,7 @@ const Filter = () => {
   };
 
   const breeds = dogList;
+  let paramsEnd = '';
 
   //Update this object of checked breeds 
   const handleCheckedBreeds = (e) => {
@@ -69,9 +71,9 @@ const Filter = () => {
   // breed dropdown list
   const listDog = (dog, index) => {
     return (
-      <li>
+      <li key={index}>
         <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-          <input key={index} id="checkbox-item-11" type="checkbox" value="" name={dog} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" onClick={handleCheckedBreeds} />
+          <input id="checkbox-item-11" type="checkbox" value="" name={dog} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" onClick={handleCheckedBreeds} />
           <label htmlFor="checkbox-item-11" className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{dog}</label>
         </div>
       </li>
@@ -106,55 +108,74 @@ const Filter = () => {
 
   // next page
   const handleNextPage = (e) => {
-    e.preventDefault();
-    return filteredDogs(e, searchResult.next)
-  }
+    e.preventDefault()
+    if (searchResult.total > from) {
+      setFrom(from + 25)
+      paramsEnd = searchResult.next;
+      return filteredDogs(e);
+    }
+  };
 
+  // prev page
+  const handlePrevPage = (e) => {
+    e.preventDefault()
+    if (from >= 25) {
+      setFrom(from - 25)
+      paramsEnd = searchResult.prev;
+      return filteredDogs(e);
+    }
+  };
+
+  const adjustParams = () => {
+    const params = {};
+
+    const breedResult = Array.from(checkedBreeds.keys());
+    if (breedResult.length !== 0) {
+      params.breeds = breedResult;
+    }
+    const validZipTest = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
+    if (validZipTest.test(zip)) {
+      params.zipCodes = [zip];
+    }
+    else if (zip !== '') {
+      alert('invalid zip code entry');
+    }
+
+    if (minAge >= 0) {
+      params.ageMin = minAge;
+    }
+
+    if (maxAge > 0) {
+      params.ageMax = maxAge;
+    }
+
+    if (size < 25) {
+      params.size = size;
+    }
+
+    console.log(params, checkedBreeds);
+
+    const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
+
+    const paramsEnd = '/dogs/search?' + encodeGetParams(params);
+    console.log("PARAMSEND", params.breeds);
+    return paramsEnd;
+  }
   // get next, prev, total and resultIds of the dog filter. 
-  const filteredDogs = async (e, paramsEnd = 'dogs/search?') => {
+  const filteredDogs = async (e) => {
     e.preventDefault();
     try {
-      if (paramsEnd !==
-        '') {
-        const params = {};
-
-        const breedResult = Array.from(checkedBreeds.keys());
-        if (breedResult.length !== 0) {
-          params.breeds = breedResult;
-        }
-        const validZipTest = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
-        if (validZipTest.test(zip)) {
-          params.zipCodes = [zip];
-        }
-        else if (zip !== '') {
-          alert('invalid zip code entry');
-        }
-
-        if (minAge >= 0) {
-          params.ageMin = minAge;
-        }
-
-        if (maxAge > 0) {
-          params.ageMax = maxAge;
-        }
-
-        if (size < 25) {
-          params.size = size;
-        }
-        const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
-
-        paramsEnd = 'dogs/search?' + encodeGetParams(params);
-
+      if (paramsEnd === '') {
+        paramsEnd = adjustParams();
       }
-
-      const response = await fetch(`https://frontend-take-home-service.fetch.com/${paramsEnd}`, {
+      console.log(paramsEnd, searchResult);
+      const response = await fetch(`https://frontend-take-home-service.fetch.com${paramsEnd}`, {
         method: 'GET',
         credentials: 'include',
       });
       const data = await response.json();
       if (response.ok) {
         setSearchResult(data);
-        console.log(paramsEnd, 'what does params look like?')
         console.log(data, 'what does searchResult look like?????')
         if (Object.keys(data).length === 0) {
           console.log('No matches found based on your search criteria. Please try again.')
@@ -166,7 +187,6 @@ const Filter = () => {
       console.error(err, 'An error has occured. Failed to filter dogs result.');
     }
   };
-
   // give the ids of the dogs of interest? 
   const getDogs = async (searchResult) => {
 
@@ -192,7 +212,7 @@ const Filter = () => {
   };
   const displayDog = (dogObj, index) => {
     return (
-      <div><h2 key={index}>hello {dogObj.id} {dogObj.age}</h2>
+      <div key={index}><h2>hello {dogObj.id} {dogObj.age}</h2>
         <img src={dogObj.img} />
       </div>
     );
@@ -229,7 +249,7 @@ const Filter = () => {
           })}
         </ul>
       </div>
-      <form onSubmit={(e) => filteredDogs(e, paramsEnd)}>
+      <form onSubmit={(e) => { setFrom(0); filteredDogs(e) }}>
         <div className="form-control w-full max-w-xs">
           {/* zipcode */}
           <label className="label">
@@ -256,12 +276,12 @@ const Filter = () => {
       <div className="flex flex-col items-center">
         {/* <!-- Help text --> */}
         <span className="text-sm text-gray-700 dark:text-gray-400">
-          Showing <span className="font-semibold text-gray-900 dark:text-white">1</span> to <span className="font-semibold text-gray-900 dark:text-white">25
+          Showing <span className="font-semibold text-gray-900 dark:text-white">{from + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{from + 25}
           </span> of <span className="font-semibold text-gray-900 dark:text-white">{searchResult.total}</span> Entries
         </span>
         <div className="inline-flex mt-2 xs:mt-0">
           {/* <!-- Buttons --> */}
-          <button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+          <button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" onClick={(e) => { handlePrevPage(e) }}>
             <svg className="w-3.5 h-3.5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5H1m0 0 4 4M1 5l4-4" />
             </svg>
