@@ -18,7 +18,7 @@ const Filter = () => {
   const [size, setSize] = useState(25);
   const [from, setFrom] = useState(0);
 
-  const checkedBreeds = useMemo(() => new Map(), []); // for keeping track of what has been checked marked on breeds. 
+  const [checkedBreeds, setCheckedBreeds] = useState({}) // for keeping track of what has been checked marked on breeds. 
   const handleSearchInputChange = (e) => {
     const query = e.target.value
     setBreedSearchQuery(query);
@@ -36,13 +36,15 @@ const Filter = () => {
   const handleCheckedBreeds = (e) => {
     //unchecking a box
     let breedName = e.target.name;
-    // if the dog breed is already in the object, we will be unchecking it by setting it to false.  
-    if (checkedBreeds.get(breedName)) {
-      checkedBreeds.delete(breedName);
+    // if the dog breed is already in the object, we will be removing it from the object
+    if (checkedBreeds[breedName]) {
+      delete checkedBreeds[breedName];
+      setCheckedBreeds({ ...checkedBreeds });
     }
     //checking a box
     else {
-      checkedBreeds.set(breedName, true);
+      checkedBreeds[breedName] = true;
+      setCheckedBreeds({ ...checkedBreeds });
     }
     console.log("handleCheckedBreeds", e.target.name, checkedBreeds);
 
@@ -75,7 +77,7 @@ const Filter = () => {
     return (
       <li key={dog}>
         <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-          <input id={`checkbox-item-${index}`} type="checkbox" value="" name={dog} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" onChange={handleCheckedBreeds} checked={checkedBreeds.get(dog)} />
+          <input id={`checkbox-item-${index}`} type="checkbox" value="" name={dog} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" onChange={handleCheckedBreeds} />
           <label htmlFor={`checkbox-item-${index}`} className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{dog}</label>
         </div>
       </li>
@@ -129,9 +131,11 @@ const Filter = () => {
   };
 
   const adjustParams = () => {
-    const params = {};
+    const params = {
+    };
 
-    const breedResult = Array.from(checkedBreeds.keys());
+    const breedResult = Object.keys(checkedBreeds);
+    breedResult.sort((a, b) => a - b) // default sort in ascending order
     let breedString = ''
     if (breedResult.length !== 0) {
       // params.breeds = breedResult;
@@ -169,11 +173,12 @@ const Filter = () => {
 
     const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
 
-    let paramsEnd = '/dogs/search?' + encodeGetParams(params);
+    let paramsEnd = '/dogs/search?' + encodeGetParams(params)
     console.log("PARAMSEND", params.breeds);
     if (breedString !== '') {
       paramsEnd += `&${breedString}`
     }
+    // paramsEnd += `sort%3Dbreeds%3A%5Basc%5D` //ascending by default 
     return paramsEnd;
   }
   // get next, prev, total and resultIds of the dog filter. 
