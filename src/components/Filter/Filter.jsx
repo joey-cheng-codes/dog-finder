@@ -44,6 +44,8 @@ const Filter = () => {
     else {
       checkedBreeds.set(breedName, true);
     }
+    console.log("handleCheckedBreeds", e.target.name, checkedBreeds);
+
   };
 
 
@@ -71,10 +73,10 @@ const Filter = () => {
   // breed dropdown list
   const listDog = (dog, index) => {
     return (
-      <li key={index}>
+      <li key={dog}>
         <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-          <input id="checkbox-item-11" type="checkbox" value="" name={dog} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" onClick={handleCheckedBreeds} />
-          <label htmlFor="checkbox-item-11" className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{dog}</label>
+          <input id={`checkbox-item-${index}`} type="checkbox" value="" name={dog} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" onChange={handleCheckedBreeds} checked={checkedBreeds.get(dog)} />
+          <label htmlFor={`checkbox-item-${index}`} className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{dog}</label>
         </div>
       </li>
 
@@ -130,8 +132,18 @@ const Filter = () => {
     const params = {};
 
     const breedResult = Array.from(checkedBreeds.keys());
+    let breedString = ''
     if (breedResult.length !== 0) {
-      params.breeds = breedResult;
+      // params.breeds = breedResult;
+      breedResult.forEach((breed, index) => {
+        let newBreed = breed.split(" ").join('%20');
+        if (index < breedResult.length - 1) {
+          breedString += `breeds%5B${index}%5D=${newBreed}&`
+        }
+        else {
+          breedString += `breeds%5B${index}%5D=${newBreed}`
+        }
+      })
     }
     const validZipTest = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
     if (validZipTest.test(zip)) {
@@ -157,8 +169,11 @@ const Filter = () => {
 
     const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
 
-    const paramsEnd = '/dogs/search?' + encodeGetParams(params);
+    let paramsEnd = '/dogs/search?' + encodeGetParams(params);
     console.log("PARAMSEND", params.breeds);
+    if (breedString !== '') {
+      paramsEnd += `&${breedString}`
+    }
     return paramsEnd;
   }
   // get next, prev, total and resultIds of the dog filter. 
