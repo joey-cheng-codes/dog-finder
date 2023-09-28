@@ -197,7 +197,9 @@ const Filter = () => {
   const filteredDogs = async (e) => {
     e.preventDefault();
     try {
-      paramsEnd = adjustParams();
+      if (paramsEnd === '') {
+        paramsEnd = adjustParams();
+      }
       // console.log(paramsEnd, searchResult);
       const response = await fetch(`https://frontend-take-home-service.fetch.com${paramsEnd}`, {
         method: 'GET',

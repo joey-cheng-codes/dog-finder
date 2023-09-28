@@ -8,13 +8,21 @@ const Card = ({ dogObj, index }) => {
   const handleHeartClick = () => {
     if (heart === emptyHeart) {
       setHeart(redHeart);
+    }
+    else {
+      setHeart(emptyHeart);
+    }
+  }
+  const handleMatch = () => {
+    if (heart === emptyHeart) {
       if (!match.includes(dogObj.id)) {
-        setMatch([...match, dogObj['id']])
+        setMatch((prevState) => {
+          return [...prevState, dogObj['id']]
+        })
       }
       console.log(match, 'see if adding match is working')
     }
     else {
-      setHeart(emptyHeart);
       const filtered = match.filter((dogId) => {
         dogId !== dogObj.id
       })
@@ -27,7 +35,7 @@ const Card = ({ dogObj, index }) => {
       <figure><img className='dog-image' src={dogObj.img} alt={`image of ${dogObj.breed} name ${dogObj.name}`} /></figure>
       <div className="card-body">
         <div className='heart-container'>
-          <img className='heart-button' src={heart} alt='like button in the shape of a heart to favorite dogs' onClick={handleHeartClick} />
+          <img className='heart-button' src={heart} alt='like button in the shape of a heart to favorite dogs' onClick={(e) => { handleHeartClick(e); handleMatch(e) }} />
           {/* <button className="btn btn-primary">Favorite This Dog</button> */}
         </div>
         <div className='card-info'>
