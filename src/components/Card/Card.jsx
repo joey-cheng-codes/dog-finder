@@ -32,7 +32,7 @@ const Card = ({ dogObj, index }) => {
   }
   return (
     <div key={`dog-${index}`} className="card card-compact w-96 bg-base-100 shadow-xl" >
-      <figure><img className='dog-image' src={dogObj.img} alt={`image of ${dogObj.breed} name ${dogObj.name}`} /></figure>
+      <figure className='dog-image-container' ><img className='dog-image' src={dogObj.img} alt={`image of ${dogObj.breed} name ${dogObj.name}`} /></figure>
       <div className="card-body">
         <div className='heart-container'>
           <img className='heart-button' src={heart} alt='like button in the shape of a heart to favorite dogs' onClick={(e) => { handleHeartClick(e); handleMatch(e) }} />

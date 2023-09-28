@@ -2,9 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Home Page */
+.main-container {
+  margin: 10px;
+}
+
+/* Filter Page*/
+.filter-card-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-label {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.toggle-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+/* Card Page */
+.dog-image-container {
+  display: flex;
+  height: 350px;
+}
+
 .dog-image {
   position: relative;
   width: 400px;
+  /* height: 400px; */
   /* z-index: 1; */
   /* height: 500px; */
 }
@@ -29,9 +64,13 @@
   flex-direction: column;
 }
 
-.card card-compact w-96 bg-base-100 shadow-xl {
+/* CardHolder Page */
+.card-container {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px;
+  /* justify-content: flex-start; */
+  /* align-items: center; */
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Card from '../Card/Card.jsx'
+import CardHolder from '../CardHolder/CardHolder.jsx'
 import 'flowbite';
 
 const Filter = () => {
@@ -242,19 +242,11 @@ const Filter = () => {
       console.error(err, 'error getting dogs');
     }
   };
-  const displayDog = (dogObj, index) => {
-    return (
-      <Card dogObj={dogObj} key={`card-${index}`} />
-    );
-  };
-
   return (
     <div >
-      <h2 className="text-2xl font-bold">
-        Share your dog preferences and get matched!
-      </h2>
+
       {/* toggle for sorting starts */}
-      <div>
+      <div className='toggle-container'>
         <label className="relative inline-flex items-center cursor-pointer" >
           <input type="checkbox" value="" className="sr-only peer" checked={toggle === 'asc'} onChange={handleToggle} />
           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"  >
@@ -263,55 +255,58 @@ const Filter = () => {
         </label>
       </div>
       {/* toggle for sorting ends */}
-      <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Select Breeds <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-      </svg></button>
-
-      {/* <!-- Dropdown menu --> */}
-      <div id="dropdownSearch" className="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
-        <div className="p-3">
-          <label htmlFor="input-group-search" className="sr-only">Search</label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-              </svg>
+      <div className='filter-card-container'>
+        <div className='filter-container'>
+          <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Select Breeds <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+          </svg></button>
+          {/* <!-- Dropdown menu --> */}
+          <div id="dropdownSearch" className="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+            <div className="p-3">
+              <label htmlFor="input-group-search" className="sr-only">Search</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                  </svg>
+                </div>
+                <input type="text" id="input-group-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search breed type" onChange={handleSearchInputChange} value={breedSearchQuery} />
+              </div>
             </div>
-            <input type="text" id="input-group-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search breed type" onChange={handleSearchInputChange} value={breedSearchQuery} />
+            <ul className="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButton">
+              {/* updates the search bar as you type in the breed of interest */}
+              {filteredBreeds.map((dog, index) => {
+                return (
+                  listDog(dog, index)
+                );
+              })}
+            </ul>
           </div>
+          <form onSubmit={(e) => { setFrom(0); filteredDogs(e) }}>
+            <div className="form-control w-full max-w-xs">
+              {/* zipcode */}
+              <label className="filter-label">
+                <span className="label-text">Zip Code</span>
+              </label>
+              <input onChange={handleZipcodeInput} value={zip} type="text" pattern="[0-9]{5}" placeholder="Zip Code" className="input input-bordered w-full max-w-xs" />
+              {/* min age */}
+              <label className="filter-label">
+                <span className="label-text">Minimum Age</span>
+              </label>
+              <input onChange={handleMinAgeInput} value={minAge} type="number" min="0" max="99" placeholder="Minimum Age" className="input input-bordered w-full max-w-xs" />
+              {/* max age */}
+              <label className="filter-label">
+                <span className="label-text">Maximum Age</span>
+              </label>
+              <input onChange={handleMaxAgeInput} value={maxAge} type="number" min="0" max="99" placeholder="Maximum Age" className="input input-bordered w-full max-w-xs" />
+            </div>
+            <div>
+              <button type='submit' className="btn btn-wide">Search Dogs!</button>
+            </div>
+          </form>
         </div>
-        <ul className="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButton">
-          {/* updates the search bar as you type in the breed of interest */}
-          {filteredBreeds.map((dog, index) => {
-            return (
-              listDog(dog, index)
-            );
-          })}
-        </ul>
+        <CardHolder getDogInfo={getDogInfo} />
       </div>
-      <form onSubmit={(e) => { setFrom(0); filteredDogs(e) }}>
-        <div className="form-control w-full max-w-xs">
-          {/* zipcode */}
-          <label className="label">
-            <span className="label-text">Filter dogs by zipcode</span>
-          </label>
-          <input onChange={handleZipcodeInput} value={zip} type="text" pattern="[0-9]{5}" placeholder="zipcode" className="input input-bordered w-full max-w-xs" />
-          {/* min age */}
-          <label className="label">
-            <span className="label-text">Min Age Requirement</span>
-          </label>
-          <input onChange={handleMinAgeInput} value={minAge} type="number" min="0" max="99" placeholder="minimum age" className="input input-bordered w-full max-w-xs" />
-          {/* max age */}
-          <label className="label">
-            <span className="label-text">Max Age Requirement</span>
-          </label>
-          <input onChange={handleMaxAgeInput} value={maxAge} type="number" min="0" max="99" placeholder="maxiumum age" className="input input-bordered w-full max-w-xs" />
-        </div>
-        <div>
-          <button type='submit' className="btn btn-wide">show me my matches</button>
-        </div>
-      </form>
-      {getDogInfo.length > 0 && (getDogInfo.map(displayDog))}
       {/* Pagination starts */}
       <div className="flex flex-col items-center">
         {/* <!-- Help text --> */}
@@ -336,7 +331,6 @@ const Filter = () => {
         </div>
         {/* Pagination ends */}
       </div>
-
     </div >
   );
 };
