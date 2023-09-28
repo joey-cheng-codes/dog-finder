@@ -2,41 +2,29 @@ import React, { useState } from 'react';
 import emptyHeart from '../../images/empty-heart.svg';
 import redHeart from '../../images/red-heart.svg';
 
-const Card = ({ dogObj, index }) => {
-  const [heart, setHeart] = useState(emptyHeart);
-  const [match, setMatch] = useState([]);
-  const handleHeartClick = () => {
-    if (heart === emptyHeart) {
-      setHeart(redHeart);
-    }
-    else {
-      setHeart(emptyHeart);
-    }
-  }
+const Card = ({ dogObj, index, match, setMatch }) => {
+
+  // const [match, setMatch] = useState({});
+  let heart = emptyHeart;
   const handleMatch = () => {
     if (heart === emptyHeart) {
-      if (!match.includes(dogObj.id)) {
-        setMatch((prevState) => {
-          return [...prevState, dogObj['id']]
-        })
+      if (!match[dogObj.id]) {
+        match[dogObj.id] = true;
+        setMatch({ ...match })
       }
-      console.log(match, 'see if adding match is working')
     }
     else {
-      const filtered = match.filter((dogId) => {
-        dogId !== dogObj.id
-      })
-      setMatch(filtered)
-      console.log(dogObj, match, 'see if removing match is working')
+      delete match[dogObj.id]
+      setMatch({ ...match })
     }
   }
+
   return (
     <div key={`dog-${index}`} className="card card-compact w-96 bg-base-100 shadow-xl" >
       <figure className='dog-image-container' ><img className='dog-image' src={dogObj.img} alt={`image of ${dogObj.breed} name ${dogObj.name}`} /></figure>
       <div className="card-body">
         <div className='heart-container'>
-          <img className='heart-button' src={heart} alt='like button in the shape of a heart to favorite dogs' onClick={(e) => { handleHeartClick(e); handleMatch(e) }} />
-          {/* <button className="btn btn-primary">Favorite This Dog</button> */}
+          <img className='heart-button' src={match[dogObj.id] ? heart = redHeart : heart = emptyHeart} alt='like button in the shape of a heart to favorite dogs' onClick={(e) => { handleMatch(e) }} />
         </div>
         <div className='card-info'>
           <h2 className="card-title">{dogObj.name}</h2>

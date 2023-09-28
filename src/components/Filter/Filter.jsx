@@ -21,6 +21,8 @@ const Filter = () => {
 
   const [toggle, setToggle] = useState('asc');
   const [checkedBreeds, setCheckedBreeds] = useState({}) // for keeping track of what has been checked marked on breeds. 
+  const [match, setMatch] = useState({});
+
   const handleSearchInputChange = (e) => {
     const query = e.target.value
     setBreedSearchQuery(query);
@@ -305,7 +307,7 @@ const Filter = () => {
             </div>
           </form>
         </div>
-        <CardHolder getDogInfo={getDogInfo} />
+        <CardHolder getDogInfo={getDogInfo} match={match} setMatch={setMatch} />
       </div>
       {/* Pagination starts */}
       <div className="flex flex-col items-center">

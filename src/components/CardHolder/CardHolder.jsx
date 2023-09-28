@@ -1,11 +1,11 @@
 import React from 'react';
 import Card from '../Card/Card.jsx'
 
-const CardHolder = ({ getDogInfo }) => {
+const CardHolder = ({ getDogInfo, match, setMatch }) => {
 
   const displayDog = (dogObj, index) => {
     return (
-      <Card dogObj={dogObj} key={`card-${index}`} />
+      <Card dogObj={dogObj} key={`card-${index}`} match={match} setMatch={setMatch} />
     );
   };
   return (
