@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+import Card from '../Card/Card.jsx'
 import 'flowbite';
 
 const Filter = () => {
@@ -101,12 +102,9 @@ const Filter = () => {
   const handleToggle = (e) => {
     if (toggle == 'asc') {
       setToggle('desc')
-      console.log(paramsEnd, 'seee what paramsEnd looks like here')
-      // paramsEnd = paramsEnd.replace('sort=breed%3Aasc', 'sort=breed%3Adesc')
     }
     else {
       setToggle('asc');
-      // paramsEnd = paramsEnd.replace('sort=breed%3Adesc', 'sort=breed%3Aasc')
     }
     filteredDogs(e);
     // const currentUrl = window.location.href;
@@ -152,10 +150,8 @@ const Filter = () => {
     };
 
     const breedResult = Object.keys(checkedBreeds);
-    // breedResult.sort((a, b) => a - b) // default sort in ascending order
     let breedString = ''
     if (breedResult.length !== 0) {
-      // params.breeds = breedResult;
       breedResult.forEach((breed, index) => {
         let newBreed = breed.split(" ").join('%20');
         if (index < breedResult.length - 1) {
@@ -195,17 +191,14 @@ const Filter = () => {
     if (breedString !== '') {
       paramsEnd += `&${breedString}`
     }
-    // paramsEnd += '&sort=breed:desc'//`&sort%3Dbreed%3Adesc` //descending by default 
     return paramsEnd;
   }
   // get next, prev, total and resultIds of the dog filter. 
   const filteredDogs = async (e) => {
     e.preventDefault();
     try {
-      // if (paramsEnd === '') {
       paramsEnd = adjustParams();
-      // }
-      console.log(paramsEnd, searchResult);
+      // console.log(paramsEnd, searchResult);
       const response = await fetch(`https://frontend-take-home-service.fetch.com${paramsEnd}`, {
         method: 'GET',
         credentials: 'include',
@@ -249,9 +242,7 @@ const Filter = () => {
   };
   const displayDog = (dogObj, index) => {
     return (
-      <div key={index}><h2>hello {dogObj.id} {dogObj.age}</h2>
-        <img src={dogObj.img} />
-      </div>
+      <Card dogObj={dogObj} key={`card-${index}`} />
     );
   };
 
