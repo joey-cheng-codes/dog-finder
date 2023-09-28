@@ -12,12 +12,13 @@ const Filter = () => {
 
   const [zip, setZip] = useState('');
 
-  const [minAge, setMinAge] = useState();
-  const [maxAge, setMaxAge] = useState();
+  const [minAge, setMinAge] = useState('');
+  const [maxAge, setMaxAge] = useState('');
 
   const [size, setSize] = useState(25);
   const [from, setFrom] = useState(0);
 
+  const [toggle, setToggle] = useState('asc');
   const [checkedBreeds, setCheckedBreeds] = useState({}) // for keeping track of what has been checked marked on breeds. 
   const handleSearchInputChange = (e) => {
     const query = e.target.value
@@ -97,6 +98,21 @@ const Filter = () => {
       '67218'
   }];
 
+  const handleToggle = (e) => {
+    if (toggle == 'asc') {
+      setToggle('desc')
+      console.log(paramsEnd, 'seee what paramsEnd looks like here')
+      // paramsEnd = paramsEnd.replace('sort=breed%3Aasc', 'sort=breed%3Adesc')
+    }
+    else {
+      setToggle('asc');
+      // paramsEnd = paramsEnd.replace('sort=breed%3Adesc', 'sort=breed%3Aasc')
+    }
+    filteredDogs(e);
+    // const currentUrl = window.location.href;
+    // console.log(currentlUrl, 'are you current tho"')
+    // window.location.replace(currentUrl);
+  }
   // input field for zip code handler
   const handleZipcodeInput = (e) => {
     setZip(e.target.value);
@@ -132,10 +148,11 @@ const Filter = () => {
 
   const adjustParams = () => {
     const params = {
+      sort: `breed:${toggle}`
     };
 
     const breedResult = Object.keys(checkedBreeds);
-    breedResult.sort((a, b) => a - b) // default sort in ascending order
+    // breedResult.sort((a, b) => a - b) // default sort in ascending order
     let breedString = ''
     if (breedResult.length !== 0) {
       // params.breeds = breedResult;
@@ -178,16 +195,16 @@ const Filter = () => {
     if (breedString !== '') {
       paramsEnd += `&${breedString}`
     }
-    // paramsEnd += `sort%3Dbreeds%3A%5Basc%5D` //ascending by default 
+    // paramsEnd += '&sort=breed:desc'//`&sort%3Dbreed%3Adesc` //descending by default 
     return paramsEnd;
   }
   // get next, prev, total and resultIds of the dog filter. 
   const filteredDogs = async (e) => {
     e.preventDefault();
     try {
-      if (paramsEnd === '') {
-        paramsEnd = adjustParams();
-      }
+      // if (paramsEnd === '') {
+      paramsEnd = adjustParams();
+      // }
       console.log(paramsEnd, searchResult);
       const response = await fetch(`https://frontend-take-home-service.fetch.com${paramsEnd}`, {
         method: 'GET',
@@ -243,6 +260,16 @@ const Filter = () => {
       <h2 className="text-2xl font-bold">
         Share your dog preferences and get matched!
       </h2>
+      {/* toggle for sorting starts */}
+      <div>
+        <label className="relative inline-flex items-center cursor-pointer" >
+          <input type="checkbox" value="" className="sr-only peer" checked={toggle === 'asc'} onChange={handleToggle} />
+          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"  >
+          </div>
+          <span className="ml-3 text-sm font-medium text-white-900 dark:text-white-300">Sort by {toggle === 'asc' ? 'Ascending' : 'Descending'}</span>
+        </label>
+      </div>
+      {/* toggle for sorting ends */}
       <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Select Breeds <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
       </svg></button>
