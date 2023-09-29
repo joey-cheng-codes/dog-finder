@@ -7,6 +7,17 @@
   margin: 10px;
 }
 
+.title-logout-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.logout-text {
+  text-decoration: underline;
+  font-size: 16px;
+}
+
 /* Filter Page*/
 
 .filter-card-container {

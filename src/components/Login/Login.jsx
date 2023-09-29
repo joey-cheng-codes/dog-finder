@@ -28,7 +28,7 @@ const Login = () => {
       }
     }
     catch (err) {
-      console.error(err, 'something went wrong');
+      console.error(err, 'Cannot login. Please try again.');
       window.location.replace('/');
     }
   };
