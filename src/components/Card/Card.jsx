@@ -10,11 +10,13 @@ const Card = ({ dogObj, index, likeDogs, setLikeDogs }) => {
       if (!likeDogs[dogObj.id]) {
         likeDogs[dogObj.id] = true;
         setLikeDogs({ ...likeDogs })
+        console.log(likeDogs, 'is the dog being added?')
       }
     }
     else {
       delete setLikeDogs[dogObj.id]
       setLikeDogs({ ...likeDogs })
+      console.log(likeDogs, 'is the dog being removed')
     }
   }
 
@@ -30,7 +32,7 @@ const Card = ({ dogObj, index, likeDogs, setLikeDogs }) => {
           <p>Zip Code: {dogObj[`zip_code`]}</p>
         </div>
         <div className='heart-container'>
-          <img className='heart-button' src={likeDogs[dogObj.id] ? heart = redHeart : heart = emptyHeart} alt='like button in the shape of a heart to favorite dogs' onClick={(e) => { handleMatch(e) }} />
+          <img className='heart-button' src={likeDogs[dogObj.id] ? heart = redHeart : heart = emptyHeart} alt='like button in the shape of a heart to favorite dogs' onClick={handleMatch} />
         </div>
         <div className="card-actions justify-end">
         </div>

@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 /* Home Page */
+
 .main-container {
   margin: 10px;
 }
@@ -19,6 +20,23 @@
 }
 
 /* Filter Page*/
+.toggle-container {
+  display: flex;
+  flex-direction: row;
+  padding: 30px 0 0 0;
+}
+
+.form-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.filter-result-btn-container {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0 0 0;
+}
 
 .filter-card-container {
   display: flex;
@@ -31,7 +49,7 @@
   flex-direction: column;
   position: sticky;
   max-width: 250px;
-  gap: 4px;
+  gap: 10px;
 }
 
 .filter-label {
@@ -39,12 +57,13 @@
   font-size: 20px;
 }
 
-.toggle-container {
+.match-text-container {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+  flex-direction: column;
+  padding: 50px 0 0 0;
+  gap: 10px;
+  font-size: 12px;
 }
-
 
 /* Card Page */
 .dog-image-container {
@@ -77,13 +96,15 @@
   padding: 0;
 }
 
-/* CardHolder Page */
+/* Cardholder Page */
 .card-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 10px;
   margin: 10px;
+  max-height: 80vh;
+  overflow: scroll;
 }
 
 /* Match Page */

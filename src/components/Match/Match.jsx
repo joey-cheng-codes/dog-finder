@@ -16,7 +16,7 @@ const Match = ({ match, handleMatchButton }) => {
               <div className="card card-compact bg-base-100 shadow-xl">
                 <figure><img className='dog-image' src={img} alt={`image of ${breed}`} /></figure>
                 <div className="card-body">
-                  <h2 className="card-title">Congratulations! You match with {name}!</h2>
+                  <h2 className="card-title">Congratulations! You matched with {name}!</h2>
                   <p>Breed: {breed} </p>
                   <p>Age: {age} </p>
                   <p>Zip: {zip_code} </p>
