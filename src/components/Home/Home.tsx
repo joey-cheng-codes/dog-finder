@@ -6,8 +6,9 @@ const Home = () => {
   return (
     <div className='main-container'>
       <h1 className="text-2xl font-bold">
-        Find A Match!
+        Adopt a Dog!
       </h1>
+      <h4>Logout</h4>
       <Filter />
     </div>
   );

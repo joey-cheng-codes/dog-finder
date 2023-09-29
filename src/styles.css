@@ -8,14 +8,18 @@
 }
 
 /* Filter Page*/
+
 .filter-card-container {
   display: flex;
   flex-direction: row;
+  gap: 10px;
 }
 
 .filter-container {
   display: flex;
   flex-direction: column;
+  position: sticky;
+  max-width: 250px;
   gap: 4px;
 }
 
@@ -30,38 +34,36 @@
   justify-content: flex-end;
 }
 
+
 /* Card Page */
 .dog-image-container {
   display: flex;
-  height: 350px;
+  flex-direction: row;
+  width: 250px;
 }
 
 .dog-image {
   position: relative;
-  width: 400px;
-  /* height: 400px; */
-  /* z-index: 1; */
-  /* height: 500px; */
+  width: 250px;
+  height: 200px;
+  object-fit: cover;
+  object-position: 100% 0;
 }
 
 .heart-button {
-  width: 40px;
-  /* float: right; */
+  width: 30px;
 }
 
 .heart-container {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  /* position: absolute; */
-  /* z-index: 2; */
-  /* top: 0px; */
-
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .card-body {
   display: flex;
   flex-direction: column;
+  padding: 0;
 }
 
 /* CardHolder Page */
@@ -71,6 +73,10 @@
   flex-wrap: wrap;
   gap: 10px;
   margin: 10px;
-  /* justify-content: flex-start; */
-  /* align-items: center; */
+}
+
+/* Match Page */
+.btn modal {
+  height: 100px;
+  margin: 10px;
 }

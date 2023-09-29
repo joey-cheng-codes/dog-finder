@@ -310,6 +310,7 @@ const Filter = () => {
         </label>
       </div>
       {/* toggle for sorting ends */}
+      {/* <div className='filter-bar'> */}
       <div className='filter-card-container'>
         <div className='filter-container'>
           <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Select Breeds <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -356,16 +357,16 @@ const Filter = () => {
               <input onChange={handleMaxAgeInput} value={maxAge} type="number" min="0" max="99" placeholder="Maximum Age" className="input input-bordered w-full max-w-xs" />
             </div>
             <div>
-              <button type='submit' className="btn btn-wide">Filter Result</button>
+              <button type='submit' className="btn btn-wide bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Filter Result</button>
             </div>
           </form>
           <span> When you're done browsing for dogs, click the button below to find your match!</span>
-          {/* <button onClick={(e) => { handleMatchButton(e) }} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Find A Match!
-          </button> */}
+
           {match && <Match match={match} handleMatchButton={handleMatchButton} />}
         </div>
-        <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
+        <div className='filter-card-container'>
+          <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
+        </div>
       </div>
       {/* Pagination starts */}
       <div className="flex flex-col items-center">
