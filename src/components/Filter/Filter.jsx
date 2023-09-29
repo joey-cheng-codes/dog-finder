@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import CardHolder from '../CardHolder/CardHolder.jsx'
+import CardHolder from '../CardHolder/CardHolder.jsx';
+import Match from '../Match/Match.jsx';
 import 'flowbite';
 
 const Filter = () => {
@@ -8,7 +9,6 @@ const Filter = () => {
   const [searchResult, setSearchResult] = useState({}); // display search result that contains next, resultIds, total
 
   const [breedSearchQuery, setBreedSearchQuery] = useState('');
-  const [displayResult, setDisplayResult] = useState([]) // dogs of interest 
   const [filteredBreeds, setFilteredBreeds] = useState([]); // for the search bar ..
 
   const [zip, setZip] = useState('');
@@ -21,7 +21,8 @@ const Filter = () => {
 
   const [toggle, setToggle] = useState('asc');
   const [checkedBreeds, setCheckedBreeds] = useState({}) // for keeping track of what has been checked marked on breeds. 
-  const [match, setMatch] = useState({});
+  const [likeDogs, setLikeDogs] = useState({}); // for keeping track of dogs we like
+  const [match, setMatch] = useState({}); // object of match dog
 
   const handleSearchInputChange = (e) => {
     const query = e.target.value
@@ -244,9 +245,61 @@ const Filter = () => {
       console.error(err, 'error getting dogs');
     }
   };
+
+
+  const getMatch = async (likeDogs) => {
+    try {
+      const dogIdArr = Object.keys(likeDogs);
+      console.log(dogIdArr, 'does this contain an array of dogIds???')
+      const response = await fetch('https://frontend-take-home-service.fetch.com/dogs/match', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dogIdArr)
+      })
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data, 'what does this look like?')
+        getSingleMatch(data);
+      }
+    }
+    catch (err) {
+      console.error(err, 'Error getting a match for dog')
+    }
+  };
+
+  const getSingleMatch = async (dogMatch) => {
+    try {
+      const matchId = dogMatch.match
+      const arr = [matchId]
+      console.log(arr, 'is this a arr')
+      const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(arr),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data, 'is this giving back my future dog obJ???')
+        setMatch(data[0]);
+      }
+    }
+    catch (err) {
+      console.error(err, 'error getting match of dream dog');
+    }
+  };
+  // match page
+  const handleMatchButton = () => {
+    getMatch(likeDogs);
+  };
+
   return (
     <div >
-
       {/* toggle for sorting starts */}
       <div className='toggle-container'>
         <label className="relative inline-flex items-center cursor-pointer" >
@@ -303,11 +356,16 @@ const Filter = () => {
               <input onChange={handleMaxAgeInput} value={maxAge} type="number" min="0" max="99" placeholder="Maximum Age" className="input input-bordered w-full max-w-xs" />
             </div>
             <div>
-              <button type='submit' className="btn btn-wide">Search Dogs!</button>
+              <button type='submit' className="btn btn-wide">Filter Result</button>
             </div>
           </form>
+          <span> When you're done browsing for dogs, click the button below to find your match!</span>
+          {/* <button onClick={(e) => { handleMatchButton(e) }} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Find A Match!
+          </button> */}
+          {match && <Match match={match} handleMatchButton={handleMatchButton} />}
         </div>
-        <CardHolder getDogInfo={getDogInfo} match={match} setMatch={setMatch} />
+        <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
       </div>
       {/* Pagination starts */}
       <div className="flex flex-col items-center">
@@ -332,7 +390,9 @@ const Filter = () => {
           </button>
         </div>
         {/* Pagination ends */}
+        {/* <Match match={match} /> */}
       </div>
+
     </div >
   );
 };
