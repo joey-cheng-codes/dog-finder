@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CardHolder from '../CardHolder/CardHolder.jsx';
 import Match from '../Match/Match.jsx';
+import Pagination from '../Pagination/Pagination.jsx';
 import 'flowbite';
 
 const Filter = () => {
@@ -90,18 +91,6 @@ const Filter = () => {
     );
   };
 
-  const dogSample = [{
-    age: 10,
-    breed: 'Chihuahua',
-    id: 'jnGFTIcBOvEgQ5OCx40W',
-    img:
-      'https://frontend-take-home.fetch.com/dog-images/n02085620-Chihuahua/n02085620_2973.jpg',
-    name:
-      'Laurianne',
-    zip_code:
-      '67218'
-  }];
-
   const handleToggle = (e) => {
     if (toggle == 'asc') {
       setToggle('desc')
@@ -110,9 +99,6 @@ const Filter = () => {
       setToggle('asc');
     }
     filteredDogs(e);
-    // const currentUrl = window.location.href;
-    // console.log(currentlUrl, 'are you current tho"')
-    // window.location.replace(currentUrl);
   }
   // input field for zip code handler
   const handleZipcodeInput = (e) => {
@@ -129,7 +115,6 @@ const Filter = () => {
 
   // next page
   const handleNextPage = (e) => {
-    e.preventDefault()
     if (searchResult.total > from) {
       setFrom(from + 25)
       paramsEnd = searchResult.next;
@@ -139,7 +124,6 @@ const Filter = () => {
 
   // prev page
   const handlePrevPage = (e) => {
-    e.preventDefault()
     if (from >= 25) {
       setFrom(from - 25)
       paramsEnd = searchResult.prev;
@@ -203,7 +187,6 @@ const Filter = () => {
       if (paramsEnd === '') {
         paramsEnd = adjustParams();
       }
-      // console.log(paramsEnd, searchResult);
       const response = await fetch(`https://frontend-take-home-service.fetch.com${paramsEnd}`, {
         method: 'GET',
         credentials: 'include',
@@ -224,7 +207,6 @@ const Filter = () => {
   };
   // give the ids of the dogs of interest? 
   const getDogs = async (searchResult) => {
-
     try {
       const arr = await searchResult.resultIds;
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
@@ -285,7 +267,6 @@ const Filter = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        console.log(data, 'is this giving back my future dog obJ???')
         setMatch(data[0]);
       }
     }
@@ -310,7 +291,7 @@ const Filter = () => {
         </label>
       </div>
       {/* toggle for sorting ends */}
-      {/* <div className='filter-bar'> */}
+
       <div className='filter-card-container'>
         <div className='filter-container'>
           <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Select Breeds <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -367,33 +348,8 @@ const Filter = () => {
         <div className='filter-card-container'>
           <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
         </div>
+        <Pagination from={from} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} searchResult={searchResult} />
       </div>
-      {/* Pagination starts */}
-      <div className="flex flex-col items-center">
-        {/* <!-- Help text --> */}
-        <span className="text-sm text-gray-700 dark:text-gray-400">
-          Showing <span className="font-semibold text-gray-900 dark:text-white">{from + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{from + 25}
-          </span> of <span className="font-semibold text-gray-900 dark:text-white">{searchResult.total}</span> Entries
-        </span>
-        <div className="inline-flex mt-2 xs:mt-0">
-          {/* <!-- Buttons --> */}
-          <button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" onClick={(e) => { handlePrevPage(e) }}>
-            <svg className="w-3.5 h-3.5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5H1m0 0 4 4M1 5l4-4" />
-            </svg>
-            Prev
-          </button>
-          <button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" onClick={(e) => { handleNextPage(e) }}>
-            Next
-            <svg className="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-            </svg>
-          </button>
-        </div>
-        {/* Pagination ends */}
-        {/* <Match match={match} /> */}
-      </div>
-
     </div >
   );
 };
