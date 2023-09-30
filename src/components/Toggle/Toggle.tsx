@@ -1,7 +1,11 @@
 import React from "react";
 
-const Toggle = ({ toggle, setToggle }) => {
-  const handleToggle = (e) => {
+interface ToggleArgs {
+  toggle: string,
+  setToggle: (toggle: string) => void,
+}
+const Toggle = ({ toggle, setToggle }: ToggleArgs) => {
+  const handleToggle = () => {
     if (toggle == 'asc') {
       setToggle('desc')
     }
