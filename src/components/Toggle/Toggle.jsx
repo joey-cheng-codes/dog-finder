@@ -1,6 +1,6 @@
 import React from "react";
 
-const Toggle = ({ toggle, setToggle, filteredDogs }) => {
+const Toggle = ({ toggle, setToggle }) => {
   const handleToggle = (e) => {
     if (toggle == 'asc') {
       setToggle('desc')
@@ -8,7 +8,6 @@ const Toggle = ({ toggle, setToggle, filteredDogs }) => {
     else {
       setToggle('asc');
     }
-    filteredDogs(e);
   }
   return (
     <div>

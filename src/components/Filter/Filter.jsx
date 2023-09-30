@@ -18,7 +18,7 @@ const Filter = () => {
   const [minAge, setMinAge] = useState('');
   const [maxAge, setMaxAge] = useState('');
 
-  const [size, setSize] = useState(25);
+  const size = 25;
   const [from, setFrom] = useState(0);
 
   const [toggle, setToggle] = useState('asc');
@@ -27,7 +27,7 @@ const Filter = () => {
   const [match, setMatch] = useState({}); // object of match dog
 
   const handleSearchInputChange = (e) => {
-    const query = e.target.value
+    const query = e.target.value;
     setBreedSearchQuery(query);
 
     // Filter breeds based on the search query.
@@ -166,9 +166,12 @@ const Filter = () => {
     }
     return paramsEnd;
   }
-  // get next, prev, total and resultIds of the dog filter. 
+
+  // get next, prev, total and resultIds of the dog filter.
   const filteredDogs = async (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
     try {
       if (paramsEnd === '') {
         paramsEnd = adjustParams();
@@ -212,6 +215,10 @@ const Filter = () => {
     }
   };
 
+  useEffect(() => {
+    filteredDogs();
+  }, [toggle]);
+
 
   const getMatch = async (likeDogs) => {
     try {
@@ -226,7 +233,7 @@ const Filter = () => {
       })
       const data = await response.json();
       if (response.ok) {
-        getSingleMatch(data);
+        await getSingleMatch(data);
       }
     }
     catch (err) {
@@ -256,8 +263,8 @@ const Filter = () => {
     }
   };
   // match page
-  const handleMatchButton = () => {
-    getMatch(likeDogs);
+  const handleMatchButton = async () => {
+    await getMatch(likeDogs);
   };
 
   return (
@@ -265,7 +272,7 @@ const Filter = () => {
       <div className='filter-card-container'>
         <div className='filter-container'>
           <div className='toggle-container'>
-            <Toggle toggle={toggle} setToggle={setToggle} filteredDogs={filteredDogs} />
+            <Toggle toggle={toggle} setToggle={setToggle} />
           </div>
           <div className='form-selection'>
             <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Select Breeds <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -319,7 +326,11 @@ const Filter = () => {
           <Pagination from={from} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} searchResult={searchResult} />
           <div className='match-text-container'>
             <span> When you're done browsing for dogs, click the button below to find your match!</span>
-            {match && <Match match={match} handleMatchButton={handleMatchButton} />}
+            <Match
+              match={match}
+              handleMatchButton={handleMatchButton}
+              hasLikedDogs={Object.keys(likeDogs).length > 0}
+            />
           </div>
         </div>
         <div className='filter-card-container'>

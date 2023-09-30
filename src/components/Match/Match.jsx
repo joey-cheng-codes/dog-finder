@@ -1,13 +1,20 @@
 import React from 'react';
 
-const Match = ({ match, handleMatchButton }) => {
+const Match = ({ match, handleMatchButton, hasLikedDogs }) => {
   const { img, breed, name, zip_code, age } = match;
+  const handleClick = async () => {
+    if (hasLikedDogs) {
+      await handleMatchButton();
+    }
+    document.getElementById('my_modal_2').showModal();
+  }
+
   return (
     <div className='dog-match-container'>
-      <button className="btn btn-wide bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => { document.getElementById('my_modal_2').showModal(); { handleMatchButton() } }}>Find a Match!</button>
+      <button className="btn btn-wide bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleClick}>Find a Match!</button>
       <dialog id="my_modal_2" className="modal">
         <div className="modal-box">
-          {Object.keys(match).length === 0 ?
+          {!hasLikedDogs ?
             <div>
               <h1>Please 'like' a few dogs you're interested in adopting first.</h1>
             </div>

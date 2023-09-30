@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import dogFinder1 from '../../images/dog-finder1.svg';
-import dogFinder2 from '../../images/dog-finder2.svg';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -42,7 +41,7 @@ const Login = () => {
       <div data-theme='light' >
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-opacity-100">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img className="mx-auto h-100 w-auto" src={dogFinder2} alt="Fetch Rewards" />
+            <img className="mx-auto h-100 w-auto" src={dogFinder1} alt="Fetch Rewards" />
             <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
           </div>
 
