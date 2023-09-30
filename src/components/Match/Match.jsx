@@ -11,7 +11,7 @@ const Match = ({ match, handleMatchButton, hasLikedDogs }) => {
 
   return (
     <div className='dog-match-container'>
-      <button className="btn btn-wide bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleClick}>Find a Match!</button>
+      <button className="btn btn-wide bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleClick}>Find a Match!</button>
       <dialog id="my_modal_2" className="modal">
         <div className="modal-box">
           {!hasLikedDogs ?

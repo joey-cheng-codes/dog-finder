@@ -11,9 +11,9 @@ const Home = () => {
           <div className='dogfinder-logo'>
             <img src={dogFinderh} alt='dog finder' />
           </div>
-          <h4 className="text-2xl font-bold">
+          {/* <h4 className="text-2xl font-bold">
             Adopt a Dog!
-          </h4>
+          </h4> */}
 
         </div>
         <div className='logout-container'>

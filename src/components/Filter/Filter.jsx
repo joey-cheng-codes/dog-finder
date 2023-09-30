@@ -65,12 +65,10 @@ const Filter = () => {
           method: 'GET',
           credentials: 'include',
         });
-        const data = await response.json();
-        // redirect if user does not have the appropriate cookie to access /home. 
-        console.log('response', response)
         if (response.status == 401) {
-          window.location.replace('/')
+          return window.location.replace('/')
         }
+        const data = await response.json();
         if (response.ok) {
           setDogList(data);
           setFilteredBreeds(data);
@@ -78,7 +76,6 @@ const Filter = () => {
       }
       catch (err) {
         console.error(err, 'could not get breed information');
-        window.location.replace('/')
       }
     };
 

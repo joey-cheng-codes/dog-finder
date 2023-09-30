@@ -13,16 +13,19 @@
   flex-direction: column;
   gap: 5px;
   /* align-items: center; */
+  background-color: #F0F0F0;
+  padding: 10px;
 }
 
 .title-logout-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  background-color: #F0F0F0
 }
 
 .dogfinder-logo {
-  max-width: 200px;
+  max-width: 100px;
 }
 
 .logout-text {
@@ -75,7 +78,7 @@
 .match-text-container {
   display: flex;
   flex-direction: column;
-  padding: 50px 0 0 0;
+  /* padding: 50px 0 0 0; */
   gap: 10px;
   font-size: 12px;
 }
