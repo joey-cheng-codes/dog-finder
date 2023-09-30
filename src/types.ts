@@ -12,3 +12,9 @@ export type Dog = {
 export type LikeDog = {
   [key: string]: boolean,
 }
+
+export type SearchResult = {
+  next: string,
+  resultIds: Dog[],
+  total: number,
+}

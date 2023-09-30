@@ -1,6 +1,13 @@
 import React from 'react';
+import { SearchResult } from '../../types';
 
-const Pagination = ({ from, searchResult, handleNextPage, handlePrevPage }) => {
+interface PaginationArgs {
+  from: number,
+  searchResult: SearchResult,
+  handleNextPage: () => void,
+  handlePrevPage: () => void,
+}
+const Pagination = ({ from, searchResult, handleNextPage, handlePrevPage }: PaginationArgs) => {
   return (
     <div className='pagination'>
       <div className="flex flex-col items-center dark:text-white" >
