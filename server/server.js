@@ -6,15 +6,10 @@ const PORT = 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors({
-  // credentials: true,
-}));
+app.use(cors({}));
 
 app.use('/', express.static(path.resolve(__dirname, '../build')));
 
-// app.use('/auth/login', (req, res) => {
-//   res.status(200).json();
-// })
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}...`)

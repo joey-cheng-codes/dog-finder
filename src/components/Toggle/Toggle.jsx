@@ -1,6 +1,15 @@
 import React from "react";
 
-const Toggle = ({ toggle, handleToggle }) => {
+const Toggle = ({ toggle, setToggle, filteredDogs }) => {
+  const handleToggle = (e) => {
+    if (toggle == 'asc') {
+      setToggle('desc')
+    }
+    else {
+      setToggle('asc');
+    }
+    filteredDogs(e);
+  }
   return (
     <div>
       <label className="relative inline-flex items-center cursor-pointer" >
@@ -9,6 +18,7 @@ const Toggle = ({ toggle, handleToggle }) => {
         </div>
         <span className="ml-3 text-sm font-medium text-white-900 dark:text-white-300">Sort by {toggle === 'asc' ? 'Ascending' : 'Descending'}</span>
       </label>
+
     </div>
   )
 }

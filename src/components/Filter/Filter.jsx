@@ -53,8 +53,6 @@ const Filter = () => {
       checkedBreeds[breedName] = true;
       setCheckedBreeds({ ...checkedBreeds });
     }
-    console.log("handleCheckedBreeds", e.target.name, checkedBreeds);
-
   };
 
 
@@ -91,16 +89,6 @@ const Filter = () => {
 
     );
   };
-
-  const handleToggle = (e) => {
-    if (toggle == 'asc') {
-      setToggle('desc')
-    }
-    else {
-      setToggle('asc');
-    }
-    filteredDogs(e);
-  }
   // input field for zip code handler
   const handleZipcodeInput = (e) => {
     setZip(e.target.value);
@@ -170,12 +158,9 @@ const Filter = () => {
       params.size = size;
     }
 
-    console.log(params, checkedBreeds);
-
     const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
 
     let paramsEnd = '/dogs/search?' + encodeGetParams(params)
-    console.log("PARAMSEND", params.breeds);
     if (breedString !== '') {
       paramsEnd += `&${breedString}`
     }
@@ -195,7 +180,6 @@ const Filter = () => {
       const data = await response.json();
       if (response.ok) {
         setSearchResult(data);
-        console.log(data, 'what does searchResult look like?????')
         if (Object.keys(data).length === 0) {
           console.log('No matches found based on your search criteria. Please try again.')
         }
@@ -220,7 +204,6 @@ const Filter = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        console.log(data, 'data from getDogs ********');
         setGetDogInfo(data);
       }
     }
@@ -233,7 +216,6 @@ const Filter = () => {
   const getMatch = async (likeDogs) => {
     try {
       const dogIdArr = Object.keys(likeDogs);
-      console.log(dogIdArr, 'does this contain an array of dogIds???')
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs/match', {
         method: 'POST',
         credentials: 'include',
@@ -244,7 +226,6 @@ const Filter = () => {
       })
       const data = await response.json();
       if (response.ok) {
-        console.log(data, 'what does this look like?')
         getSingleMatch(data);
       }
     }
@@ -257,7 +238,6 @@ const Filter = () => {
     try {
       const matchId = dogMatch.match
       const arr = [matchId]
-      console.log(arr, 'is this a arr')
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
         method: 'POST',
         credentials: 'include',
@@ -285,7 +265,7 @@ const Filter = () => {
       <div className='filter-card-container'>
         <div className='filter-container'>
           <div className='toggle-container'>
-            <Toggle toggle={toggle} handleToggle={handleToggle} />
+            <Toggle toggle={toggle} setToggle={setToggle} filteredDogs={filteredDogs} />
           </div>
           <div className='form-selection'>
             <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Select Breeds <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">

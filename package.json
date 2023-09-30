@@ -1,5 +1,5 @@
 {
-  "name": "fetch",
+  "name": "dog-finder",
   "version": "1.0.0",
   "description": "fetch take home for frontend role",
   "main": "./src/index.js",

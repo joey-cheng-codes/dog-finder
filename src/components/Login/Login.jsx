@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import fetchLogo from '../../images/fetch-rewards-logo@logotyp.us.svg';
 import dogFinder1 from '../../images/dog-finder1.svg';
 import dogFinder2 from '../../images/dog-finder2.svg';
-// import { redirect, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
-  // const navigate = useNavigate();
   const loginHandler = async (e) => {
     e.preventDefault();
     try {
