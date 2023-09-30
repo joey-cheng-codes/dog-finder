@@ -4,10 +4,11 @@
   "description": "fetch take home for frontend role",
   "main": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "nodemon server/server.js",
     "dev": "webpack-dev-server --open & nodemon server/server.js",
-    "build": "NODE_ENV=production webpack"
+    "build": "NODE_ENV=production webpack",
+    "coverage": "jest --coverage"
   },
   "author": "Joey Cheng",
   "license": "ISC",
@@ -32,6 +33,7 @@
     "@babel/preset-react": "^7.22.15",
     "@testing-library/jest-dom": "^6.1.3",
     "@testing-library/react": "^14.0.0",
+    "@types/jest": "^29.5.5",
     "@types/node": "^20.6.3",
     "@types/react": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
@@ -53,6 +55,7 @@
     "sass-loader": "^13.3.2",
     "style-loader": "^3.3.3",
     "tailwindcss": "^3.3.3",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.2.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
