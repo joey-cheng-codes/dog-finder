@@ -23,5 +23,10 @@
     "server/**/*.ts",
     "server/**/*.tsx",
     "index.d.ts"
-  ]
+  ],
+  "types": [
+    "node",
+    "jest",
+    "@testing-library/jest-dom"
+  ],
 }
