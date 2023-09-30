@@ -5,7 +5,7 @@ import dogFinder1 from '../../images/dog-finder1.png'
 const Login = () => {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
-  const loginHandler = async (e) => {
+  const loginHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const response = await fetch('https://frontend-take-home-service.fetch.com/auth/login', {
@@ -30,10 +30,10 @@ const Login = () => {
     }
   };
 
-  const handleEmail = (e) => {
+  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     return setEmail(e.target.value);
   };
-  const handleFullName = (e) => {
+  const handleFullName = (e: React.ChangeEvent<HTMLInputElement>) => {
     return setFullName(e.target.value);
   };
 

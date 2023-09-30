@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Login from '../Login/Login.jsx';
+import Login from '../Login/Login';
 import Home from '../Home/Home';
 import NoMatch from '../NoMatch/NoMatch';
 
