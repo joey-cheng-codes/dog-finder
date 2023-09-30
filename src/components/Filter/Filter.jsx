@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CardHolder from '../CardHolder/CardHolder';
-import Match from '../Match/Match.jsx';
+import Match from '../Match/Match';
 import Pagination from '../Pagination/Pagination.jsx';
 import Toggle from '../Toggle/Toggle.jsx';
 import 'flowbite';

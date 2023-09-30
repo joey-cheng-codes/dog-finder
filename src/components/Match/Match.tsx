@@ -1,12 +1,21 @@
 import React from 'react';
+import { Dog } from '../../types'
 
-const Match = ({ match, handleMatchButton, hasLikedDogs }) => {
+interface MatchArgs {
+  match: Dog,
+  handleMatchButton: () => void,
+  hasLikedDogs: boolean,
+}
+const Match = ({ match, handleMatchButton, hasLikedDogs }: MatchArgs) => {
   const { img, breed, name, zip_code, age } = match;
   const handleClick = async () => {
     if (hasLikedDogs) {
       await handleMatchButton();
     }
-    document.getElementById('my_modal_2').showModal();
+    const modal = document.getElementById('my_modal_2') as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
   }
 
   return (
