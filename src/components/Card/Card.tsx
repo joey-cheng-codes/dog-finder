@@ -1,14 +1,23 @@
 import React from 'react';
 import emptyHeart from '../../images/empty-heart.svg';
 import redHeart from '../../images/red-heart.svg';
+import { Dog, LikeDog } from '../../types';
 
-const Card = ({ dogObj, index, likeDogs, setLikeDogs }) => {
+interface CardArgs {
+  dogObj: Dog;
+  index: Number;
+  likeDogs: LikeDog;
+  setLikeDogs: (likeDogs: LikeDog) => void;
+}
+
+const Card = ({ dogObj, index, likeDogs, setLikeDogs }: CardArgs) => {
   const { id, breed, age, zip_code, name, img } = dogObj;
   let heart = emptyHeart;
   const handleMatch = () => {
     if (heart === emptyHeart) {
       if (!likeDogs[id]) { }
       const updatedLikeDogs = { ...likeDogs, [id]: true }
+      console.log(likeDogs, updatedLikeDogs, 'what does like dogs?')
       setLikeDogs(updatedLikeDogs)
     }
     else {
@@ -25,7 +34,7 @@ const Card = ({ dogObj, index, likeDogs, setLikeDogs }) => {
         <div className='card-info'>
           <h2 className="card-title">{name}</h2>
           <p>Breed: {breed}</p>
-          <p>Age: {age}</p>
+          <p>Age: {age.toString()}</p>
           <p>Zip Code: {zip_code}</p>
         </div>
         <div className='heart-container'>
