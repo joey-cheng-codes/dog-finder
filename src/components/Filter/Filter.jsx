@@ -18,13 +18,16 @@ const Filter = () => {
   const [minAge, setMinAge] = useState('');
   const [maxAge, setMaxAge] = useState('');
 
-  const size = 25;
   const [from, setFrom] = useState(0);
 
   const [toggle, setToggle] = useState('asc');
   const [checkedBreeds, setCheckedBreeds] = useState({}) // for keeping track of what has been checked marked on breeds. 
   const [likeDogs, setLikeDogs] = useState({}); // for keeping track of dogs we like
   const [match, setMatch] = useState({}); // object of match dog
+  const [noMatchesFound, setNoMatchesFound] = useState(false);
+  const size = 25;
+  const breeds = dogList;
+  let paramsEnd = '';
 
   const handleSearchInputChange = (e) => {
     const query = e.target.value;
@@ -36,8 +39,6 @@ const Filter = () => {
     setFilteredBreeds(filtered);
   };
 
-  const breeds = dogList;
-  let paramsEnd = '';
 
   //Update this object of checked breeds 
   const handleCheckedBreeds = (e) => {
@@ -65,6 +66,11 @@ const Filter = () => {
           credentials: 'include',
         });
         const data = await response.json();
+        // redirect if user does not have the appropriate cookie to access /home. 
+        console.log('response', response)
+        if (response.status == 401) {
+          window.location.replace('/')
+        }
         if (response.ok) {
           setDogList(data);
           setFilteredBreeds(data);
@@ -72,6 +78,7 @@ const Filter = () => {
       }
       catch (err) {
         console.error(err, 'could not get breed information');
+        window.location.replace('/')
       }
     };
 
@@ -119,6 +126,19 @@ const Filter = () => {
       return filteredDogs(e);
     }
   };
+
+  //handle form submission
+  const handleFormSubmission = (e) => {
+    e.preventDefault();
+    if (!noMatchesFound) {
+      setFrom(0);
+      filteredDogs(e);
+    }
+    else {
+      console.log('there were no matches found - true')
+    }
+  }
+
 
   const adjustParams = () => {
     const params = {
@@ -183,7 +203,8 @@ const Filter = () => {
       const data = await response.json();
       if (response.ok) {
         setSearchResult(data);
-        if (Object.keys(data).length === 0) {
+        if (data.resultIds.length === 0) {
+          setNoMatchesFound(true);
           console.log('No matches found based on your search criteria. Please try again.')
         }
         return getDogs(data);
@@ -300,18 +321,18 @@ const Filter = () => {
                 })}
               </ul>
             </div>
-            <form onSubmit={(e) => { setFrom(0); filteredDogs(e) }}>
+            <form onSubmit={handleFormSubmission}>
               <div className="form-control w-full max-w-xs">
                 {/* min age */}
                 <label className="filter-label">
                   <span className="label-text">Minimum Age</span>
                 </label>
-                <input onChange={handleMinAgeInput} value={minAge} type="number" min="0" max="99" placeholder="Minimum Age" className="input input-bordered w-full max-w-xs" />
+                <input onChange={handleMinAgeInput} value={minAge} type="number" min="0" max="25" placeholder="Minimum Age" className="input input-bordered w-full max-w-xs" />
                 {/* max age */}
                 <label className="filter-label">
                   <span className="label-text">Maximum Age</span>
                 </label>
-                <input onChange={handleMaxAgeInput} value={maxAge} type="number" min="0" max="99" placeholder="Maximum Age" className="input input-bordered w-full max-w-xs" />
+                <input onChange={handleMaxAgeInput} value={maxAge} type="number" min="0" max="25" placeholder="Maximum Age" className="input input-bordered w-full max-w-xs" />
                 {/* zipcode */}
                 <label className="filter-label">
                   <span className="label-text">Zip Code</span>
@@ -333,10 +354,16 @@ const Filter = () => {
             />
           </div>
         </div>
-        <div className='filter-card-container'>
-          <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
-        </div>
-
+        {noMatchesFound ? (
+          <div className='no-match-container'>
+            <h1>No matches were found with this search.</h1>
+            <h1>Please try again.</h1>
+          </div>
+        ) : (
+          <div className='filter-card-container'>
+            <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
+          </div>
+        )}
       </div>
     </div >
   );
