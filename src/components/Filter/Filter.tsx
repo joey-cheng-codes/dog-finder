@@ -4,11 +4,17 @@ import Match from '../Match/Match';
 import Pagination from '../Pagination/Pagination';
 import Toggle from '../Toggle/Toggle';
 import 'flowbite';
+import { LikeDog, SearchResult, DogMatch, Params, CheckedBreed, Dog } from '../../types'
 
 const Filter = () => {
   const [dogList, setDogList] = useState([]); // breed drop down 
   const [getDogInfo, setGetDogInfo] = useState([]); // dog info (all info)
-  const [searchResult, setSearchResult] = useState({}); // display search result that contains next, resultIds, total
+  const [searchResult, setSearchResult] = useState<SearchResult>({
+    next: '',
+    resultIds: [],
+    total: 0,
+    prev: '',
+  }); // display search result that contains next, resultIds, total
 
   const [breedSearchQuery, setBreedSearchQuery] = useState('');
   const [filteredBreeds, setFilteredBreeds] = useState([]); // for the search bar ..
@@ -21,15 +27,22 @@ const Filter = () => {
   const [from, setFrom] = useState(0);
 
   const [toggle, setToggle] = useState('asc');
-  const [checkedBreeds, setCheckedBreeds] = useState({}) // for keeping track of what has been checked marked on breeds. 
+  const [checkedBreeds, setCheckedBreeds] = useState<CheckedBreed>({}) // for keeping track of what has been checked marked on breeds. 
   const [likeDogs, setLikeDogs] = useState({}); // for keeping track of dogs we like
-  const [match, setMatch] = useState({}); // object of match dog
+  const [match, setMatch] = useState<Dog>({
+    id: '',
+    img: '',
+    name: '',
+    age: 0,
+    zip_code: '',
+    breed: '',
+  }); // object of match dog
   const [noMatchesFound, setNoMatchesFound] = useState(false);
   const size = 25;
   const breeds = dogList;
   let paramsEnd = '';
 
-  const handleSearchInputChange = (e) => {
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setBreedSearchQuery(query);
 
@@ -41,7 +54,7 @@ const Filter = () => {
 
 
   //Update this object of checked breeds 
-  const handleCheckedBreeds = (e) => {
+  const handleCheckedBreeds = (e: React.ChangeEvent<HTMLInputElement>) => {
     //unchecking a box
     let breedName = e.target.name;
     // if the dog breed is already in the object, we will be removing it from the object
@@ -82,7 +95,7 @@ const Filter = () => {
     getBreeds();
   }, []);
   // breed dropdown list
-  const listDog = (dog, index) => {
+  const listDog = (dog: string, index: number) => {
     return (
       <li key={dog}>
         <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
@@ -94,51 +107,48 @@ const Filter = () => {
     );
   };
   // input field for zip code handler
-  const handleZipcodeInput = (e) => {
+  const handleZipcodeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setZip(e.target.value);
   }
 
   //age 
-  const handleMinAgeInput = (e) => {
+  const handleMinAgeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMinAge(e.target.value);
   }
-  const handleMaxAgeInput = (e) => {
+  const handleMaxAgeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMaxAge(e.target.value);
   }
 
   // next page
-  const handleNextPage = (e) => {
+  const handleNextPage = () => {
     if (searchResult.total > from) {
       setFrom(from + 25)
       paramsEnd = searchResult.next;
-      return filteredDogs(e);
+      return filteredDogs();
     }
   };
 
   // prev page
-  const handlePrevPage = (e) => {
+  const handlePrevPage = () => {
     if (from >= 25) {
       setFrom(from - 25)
       paramsEnd = searchResult.prev;
-      return filteredDogs(e);
+      return filteredDogs();
     }
   };
 
   //handle form submission
-  const handleFormSubmission = (e) => {
+  const handleFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!noMatchesFound) {
       setFrom(0);
-      filteredDogs(e);
-    }
-    else {
-      console.log('there were no matches found - true')
+      filteredDogs();
     }
   }
 
 
   const adjustParams = () => {
-    const params = {
+    const params: Params = {
       sort: `breed:${toggle}`
     };
 
@@ -163,11 +173,11 @@ const Filter = () => {
       alert('invalid zip code entry');
     }
 
-    if (minAge >= 0) {
+    if (Number(minAge) >= 0) {
       params.ageMin = minAge;
     }
 
-    if (maxAge > 0) {
+    if (Number(maxAge) > 0) {
       params.ageMax = maxAge;
     }
 
@@ -175,7 +185,7 @@ const Filter = () => {
       params.size = size;
     }
 
-    const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
+    const encodeGetParams = (p: Record<string, any>) => Object.entries(p).map(kv => kv.map(encodeURIComponent).join("=")).join("&");
 
     let paramsEnd = '/dogs/search?' + encodeGetParams(params)
     if (breedString !== '') {
@@ -185,10 +195,7 @@ const Filter = () => {
   }
 
   // get next, prev, total and resultIds of the dog filter.
-  const filteredDogs = async (e) => {
-    if (e) {
-      e.preventDefault();
-    }
+  const filteredDogs = async () => {
     try {
       if (paramsEnd === '') {
         paramsEnd = adjustParams();
@@ -202,7 +209,6 @@ const Filter = () => {
         setSearchResult(data);
         if (data.resultIds.length === 0) {
           setNoMatchesFound(true);
-          console.log('No matches found based on your search criteria. Please try again.')
         }
         return getDogs(data);
       }
@@ -212,7 +218,7 @@ const Filter = () => {
     }
   };
   // give the ids of the dogs of interest? 
-  const getDogs = async (searchResult) => {
+  const getDogs = async (searchResult: SearchResult) => {
     try {
       const arr = await searchResult.resultIds;
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
@@ -238,7 +244,7 @@ const Filter = () => {
   }, [toggle]);
 
 
-  const getMatch = async (likeDogs) => {
+  const getMatch = async (likeDogs: LikeDog) => {
     try {
       const dogIdArr = Object.keys(likeDogs);
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs/match', {
@@ -259,7 +265,7 @@ const Filter = () => {
     }
   };
 
-  const getSingleMatch = async (dogMatch) => {
+  const getSingleMatch = async (dogMatch: DogMatch) => {
     try {
       const matchId = dogMatch.match
       const arr = [matchId]

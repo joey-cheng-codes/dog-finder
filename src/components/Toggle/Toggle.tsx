@@ -1,10 +1,7 @@
 import React from "react";
+import { ToggleType } from '../../types'
 
-interface ToggleArgs {
-  toggle: string,
-  setToggle: (toggle: string) => void,
-}
-const Toggle = ({ toggle, setToggle }: ToggleArgs) => {
+const Toggle = ({ toggle, setToggle }: ToggleType) => {
   const handleToggle = () => {
     if (toggle == 'asc') {
       setToggle('desc')

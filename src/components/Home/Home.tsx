@@ -1,5 +1,5 @@
 import React from 'react';
-import Filter from '../Filter/Filter.jsx';
+import Filter from '../Filter/Filter';
 import Logout from '../Logout/Logout';
 import dogFinderh from '../../images/dog-finderh.png';
 const Home = () => {
