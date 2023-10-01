@@ -2,18 +2,18 @@ import React from 'react';
 import Card from '../Card/Card'
 import { Dog, LikeDog } from '../../types';
 
-interface CardHolderArgs {
+interface CardHolderProps {
   getDogInfo: Dog[],
   likeDogs: LikeDog,
   setLikeDogs: (likeDogs: LikeDog) => void;
 }
 
 
-const CardHolder = ({ getDogInfo, likeDogs, setLikeDogs }: CardHolderArgs) => {
+const CardHolder = ({ getDogInfo, likeDogs, setLikeDogs }: CardHolderProps) => {
 
-  const displayDog = (dogObj: Dog, index: Number) => {
+  const displayDog = (dogObj: Dog, index: number) => {
     return (
-      <Card dogObj={dogObj} index={index} key={`card-${index}`} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
+      <Card dogObj={dogObj} key={`card-${index}`} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
     );
   };
   return (

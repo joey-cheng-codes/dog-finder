@@ -217,10 +217,10 @@ const Filter = () => {
       console.error(err, 'An error has occured. Failed to filter dogs result.');
     }
   };
-  // give the ids of the dogs of interest? 
+
   const getDogs = async (searchResult: SearchResult) => {
     try {
-      const arr = await searchResult.resultIds;
+      const arr = searchResult.resultIds;
       const response = await fetch('https://frontend-take-home-service.fetch.com/dogs', {
         method: 'POST',
         credentials: 'include',

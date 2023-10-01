@@ -30,11 +30,11 @@ const Login = () => {
     }
   };
 
-  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    return setEmail(e.target.value);
+  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setEmail(e.target.value);
   };
-  const handleFullName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    return setFullName(e.target.value);
+  const handleFullName = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFullName(e.target.value);
   };
 
   return (

@@ -6,10 +6,6 @@ const Logout = () => {
       const response = await fetch('https://frontend-take-home-service.fetch.com/auth/logout', {
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({}),
-        headers: {
-          'Content-Type': 'application/json',
-        }
       });
       if (response.ok) {
         window.location.replace('/');

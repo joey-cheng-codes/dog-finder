@@ -24,8 +24,8 @@ export type DogMatch = {
 
 export type Params = {
   sort: string,
-  ageMin?: number | string,
-  ageMax?: number | string,
+  ageMin?: string,
+  ageMax?: string,
   breeds?: string[],
   zipCodes?: string[],
   size?: number,

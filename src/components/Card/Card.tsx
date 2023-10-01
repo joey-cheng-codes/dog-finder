@@ -3,42 +3,39 @@ import emptyHeart from '../../images/empty-heart.svg';
 import redHeart from '../../images/red-heart.svg';
 import { Dog, LikeDog } from '../../types';
 
-interface CardArgs {
+interface CardProps {
   dogObj: Dog;
-  index: Number;
   likeDogs: LikeDog;
   setLikeDogs: (likeDogs: LikeDog) => void;
 }
 
-const Card = ({ dogObj, index, likeDogs, setLikeDogs }: CardArgs) => {
+const Card = ({ dogObj, likeDogs, setLikeDogs }: CardProps) => {
   const { id, breed, age, zip_code, name, img } = dogObj;
-  let heart = emptyHeart;
-  const handleMatch = () => {
-    if (heart === emptyHeart) {
-      if (!likeDogs[id]) { }
-      const updatedLikeDogs = { ...likeDogs, [id]: true }
-      console.log(likeDogs, updatedLikeDogs, 'what does like dogs?')
-      setLikeDogs(updatedLikeDogs)
+  let isLiked: boolean = likeDogs[id];
+  const handleMatch = (): void => {
+    if (!isLiked) {
+      const updatedLikeDogs = { ...likeDogs, [id]: true };
+      setLikeDogs(updatedLikeDogs);
     }
     else {
       const updatedLikeDogs = { ...likeDogs }
-      delete updatedLikeDogs[id]
-      setLikeDogs(updatedLikeDogs)
+      delete updatedLikeDogs[id];
+      setLikeDogs(updatedLikeDogs);
     }
   }
 
   return (
-    <div key={`dog-${index}`} className="card card-compact bg-base-100 shadow-xl" >
+    <div key={id} className="card card-compact bg-base-100 shadow-xl" >
       <figure className='dog-image-container' ><img className='dog-image' src={img} alt={`image of ${breed} name ${name}`} /></figure>
       <div className="card-body">
         <div className='card-info'>
           <h2 className="card-title">{name}</h2>
           <p>Breed: {breed}</p>
-          <p>Age: {age.toString()}</p>
+          <p>Age: {age}</p>
           <p>Zip Code: {zip_code}</p>
         </div>
         <div className='heart-container'>
-          <img className='heart-button' src={likeDogs[id] ? heart = redHeart : heart = emptyHeart} alt='like button in the shape of a heart to favorite dogs' onClick={handleMatch} />
+          <img className='heart-button' src={isLiked ? redHeart : emptyHeart} alt='like button in the shape of a heart to favorite dogs' onClick={handleMatch} />
         </div>
         <div className="card-actions justify-end">
         </div>
