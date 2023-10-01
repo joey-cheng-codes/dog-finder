@@ -20,8 +20,6 @@
     "postcss.config.ts",
     "src/**/**/*.ts",
     "src/**/**/*.tsx",
-    "server/**/*.ts",
-    "server/**/*.tsx",
     "index.d.ts"
   ],
   "types": [
