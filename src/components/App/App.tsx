@@ -8,7 +8,6 @@ const App = () => {
 
   return (
     <div>
-      <h1>Hello world! I am using React</h1>
       <Routes>
         <Route path='/' element={<Login />} />
         <Route path='/home' element={<Home />} />
