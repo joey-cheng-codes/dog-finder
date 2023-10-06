@@ -6,7 +6,7 @@
 <br />
 
 # About the Project
-An application to help dog-lovers search through a database of shelter dogs, with the hope of finding a lucky dog a new home. 
+An application to help dog-lovers search through a database of shelter dogs, with the hope of finding a lucky dog a new home. [View the live demo here.](https://eclectic-snickerdoodle-1a2010.netlify.app/)
 
 # Tech Stack
 Typescript, Javascript, React, Node, Tailwind CSS, Daisy UI, Flowbite, React Router, React Testing Library, Jest
@@ -25,5 +25,3 @@ Users are able to filter to find their dog match:
 - Results are defaulted to sort in acsending order and can be sorted in descending order upon toggle.
 - Users can select their favorite dogs by clicking the 'heart' to indicate their interest.
 - Selecting 'Find A Match' button will match the user with one of their selections through a matching algorithm. 
-
- 
