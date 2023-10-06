@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Logout = () => {
+  const navigate = useNavigate();
   const exit = async () => {
     try {
       const response = await fetch('https://frontend-take-home-service.fetch.com/auth/logout', {
@@ -8,7 +10,10 @@ const Logout = () => {
         credentials: 'include',
       });
       if (response.ok) {
-        window.location.replace('/');
+        navigate('/', { replace: true });
+      }
+      else {
+        throw new Error('An error has occurred. Failed to logout.');
       }
     }
     catch (err) {
@@ -16,10 +21,10 @@ const Logout = () => {
     }
   }
   const handleLogout = () => {
-    return exit()
+    return exit();
   }
   return (
     <button onClick={handleLogout} className='logout-text'>Logout</button>
   )
 }
-export default Logout
+export default Logout;

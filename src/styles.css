@@ -63,10 +63,11 @@
 }
 
 .filter-container {
+  /* min-width: 240px; */
   display: flex;
   flex-direction: column;
   position: sticky;
-  max-width: 250px;
+  /* max-width: 400px; */
   gap: 10px;
 }
 
@@ -75,7 +76,7 @@
   font-size: 20px;
 }
 
-.match-text-container {
+.text-container {
   display: flex;
   flex-direction: column;
   /* padding: 50px 0 0 0; */
@@ -138,6 +139,13 @@
 .btn modal {
   height: 100px;
   margin: 10px;
+}
+
+.dog-match-container {
+  display: flex;
+  flex-direction: column;
+  white-space: normal;
+  max-width: 300px;
 }
 
 /* Login Page */

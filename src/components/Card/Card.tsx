@@ -35,7 +35,7 @@ const Card = ({ dogObj, likeDogs, setLikeDogs }: CardProps) => {
           <p>Zip Code: {zip_code}</p>
         </div>
         <div className='heart-container'>
-          <img className='heart-button' src={isLiked ? redHeart : emptyHeart} alt='like button in the shape of a heart to favorite dogs' onClick={handleMatch} />
+          <button><img className='heart-button' src={isLiked ? redHeart : emptyHeart} alt='like button in the shape of a heart to favorite dogs' onClick={handleMatch} /></button>
         </div>
         <div className="card-actions justify-end">
         </div>

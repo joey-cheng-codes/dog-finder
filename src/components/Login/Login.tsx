@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import dogFinder1 from '../../images/dog-finder1.png'
+import { useNavigate } from 'react-router-dom';
 
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const loginHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -14,7 +16,6 @@ const Login = () => {
         body: JSON.stringify({
           name: fullName,
           email: email,
-
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -23,10 +24,13 @@ const Login = () => {
       if (response.ok) {
         window.location.replace('/home');
       }
+      else {
+        throw new Error('An error occurred while logging in.');
+      }
     }
     catch (err) {
       console.error(err, 'Cannot login. Please try again.');
-      window.location.replace('/');
+      navigate('/', { replace: true });
     }
   };
 

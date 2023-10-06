@@ -5,8 +5,10 @@ import Pagination from '../Pagination/Pagination';
 import Toggle from '../Toggle/Toggle';
 import 'flowbite';
 import { LikeDog, SearchResult, DogMatch, Params, CheckedBreed, Dog } from '../../types'
+import { useNavigate } from 'react-router-dom';
 
 const Filter = () => {
+  const navigate = useNavigate();
   const [dogList, setDogList] = useState([]); // breed drop down 
   const [getDogInfo, setGetDogInfo] = useState([]); // dog info (all info)
   const [searchResult, setSearchResult] = useState<SearchResult>({
@@ -37,7 +39,6 @@ const Filter = () => {
     zip_code: '',
     breed: '',
   }); // object of match dog
-  const [noMatchesFound, setNoMatchesFound] = useState(false);
   const size = 25;
   const breeds = dogList;
   let paramsEnd = '';
@@ -79,16 +80,20 @@ const Filter = () => {
           credentials: 'include',
         });
         if (response.status == 401) {
-          return window.location.replace('/')
+          navigate('/', { replace: true });
         }
         const data = await response.json();
         if (response.ok) {
+          console.log(data, 'is getting breeds working?');
           setDogList(data);
           setFilteredBreeds(data);
         }
+        else {
+          throw new Error('An error has occurred. Could not get breed information.')
+        }
       }
       catch (err) {
-        console.error(err, 'could not get breed information');
+        console.error(err, 'Could not get breed information');
       }
     };
 
@@ -99,7 +104,7 @@ const Filter = () => {
     return (
       <li key={dog}>
         <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-          <input id={`checkbox-item-${index}`} type="checkbox" value="" name={dog} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" onChange={handleCheckedBreeds} />
+          <input id={`checkbox-item-${index}`} type="checkbox" value="" name={dog} className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500 dark:focus:ring-green-600 dark:ring-offset-green-700 dark:focus:ring-offset-green-700 focus:ring-2 dark:bg-green-600 dark:border-green-500" onChange={handleCheckedBreeds} />
           <label htmlFor={`checkbox-item-${index}`} className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{dog}</label>
         </div>
       </li>
@@ -140,10 +145,10 @@ const Filter = () => {
   //handle form submission
   const handleFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!noMatchesFound) {
-      setFrom(0);
-      filteredDogs();
-    }
+    // if (getDogInfo.length === 0) {
+    // paramsEnd = '';
+    // }
+    filteredDogs();
   }
 
 
@@ -207,10 +212,10 @@ const Filter = () => {
       const data = await response.json();
       if (response.ok) {
         setSearchResult(data);
-        if (data.resultIds.length === 0) {
-          setNoMatchesFound(true);
-        }
         return getDogs(data);
+      }
+      else {
+        throw new Error('An error has occurred. Failed to filter dog result.')
       }
     }
     catch (err) {
@@ -232,6 +237,9 @@ const Filter = () => {
       const data = await response.json();
       if (response.ok) {
         setGetDogInfo(data);
+      }
+      else {
+        throw new Error('An error has occurred. Failed to get dog information.')
       }
     }
     catch (err) {
@@ -259,6 +267,9 @@ const Filter = () => {
       if (response.ok) {
         await getSingleMatch(data);
       }
+      else {
+        throw new Error('An error has occurred. Failed to match dog.')
+      }
     }
     catch (err) {
       console.error(err, 'Error getting a match for dog')
@@ -281,6 +292,9 @@ const Filter = () => {
       if (response.ok) {
         setMatch(data[0]);
       }
+      else {
+        throw new Error('An error has occurred. Failed to get a match to dream dog.')
+      }
     }
     catch (err) {
       console.error(err, 'error getting match of dream dog');
@@ -294,12 +308,13 @@ const Filter = () => {
   return (
     <div >
       <div className='filter-card-container'>
-        <div className='filter-container'>
+        <div className='filter-container min-w-max'>
           <div className='toggle-container'>
             <Toggle toggle={toggle} setToggle={setToggle} />
           </div>
-          <div className='form-selection'>
-            <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Select Breeds <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+          <h3 className='md:font-bold text-black-700'> Enter your preferences:</h3>
+          <div className='form-selection border-2 border-blue-200 p-2'>
+            <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-green-500 rounded-lg hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-800 dark:focus:ring-green-800" type="button">Choose Breeds<svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
             </svg></button>
             {/* <!-- Dropdown menu --> */}
@@ -312,10 +327,10 @@ const Filter = () => {
                       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                     </svg>
                   </div>
-                  <input type="text" id="input-group-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search breed type" onChange={handleSearchInputChange} value={breedSearchQuery} />
+                  <input type="text" id="input-group-search" className="bg-green-50 border border-green-300 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5  dark:bg-green-600 dark:border-green-500 dark:placeholder-green-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search breed type" onChange={handleSearchInputChange} value={breedSearchQuery} />
                 </div>
               </div>
-              <ul className="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButton">
+              <ul className="h-48 px-3 pb-3 overflow-y-auto text-sm text-green-700 dark:text-green-200" aria-labelledby="dropdownSearchButton">
                 {/* updates the search bar as you type in the breed of interest */}
                 {filteredBreeds.map((dog, index) => {
                   return (
@@ -330,12 +345,12 @@ const Filter = () => {
                 <label className="filter-label">
                   <span className="label-text">Minimum Age</span>
                 </label>
-                <input onChange={handleMinAgeInput} value={minAge} type="number" min="0" max="25" placeholder="Minimum Age" className="input input-bordered w-full max-w-xs" />
+                <input onChange={handleMinAgeInput} value={minAge} type="number" min="0" max="14" placeholder="Minimum Age" className="input input-bordered w-full max-w-xs" />
                 {/* max age */}
                 <label className="filter-label">
                   <span className="label-text">Maximum Age</span>
                 </label>
-                <input onChange={handleMaxAgeInput} value={maxAge} type="number" min="0" max="25" placeholder="Maximum Age" className="input input-bordered w-full max-w-xs" />
+                <input onChange={handleMaxAgeInput} value={maxAge} type="number" min="1" max="14" placeholder="Maximum Age" className="input input-bordered w-full max-w-xs" />
                 {/* zipcode */}
                 <label className="filter-label">
                   <span className="label-text">Zip Code</span>
@@ -343,31 +358,34 @@ const Filter = () => {
                 <input onChange={handleZipcodeInput} value={zip} type="text" pattern="[0-9]{5}" placeholder="Zip Code" className="input input-bordered w-full max-w-xs" />
               </div>
               <div className='filter-result-btn-container'>
-                <button type='submit' className="btn btn-wide bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Filter Result</button>
+                <button type='submit' className="btn w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Filter Breeds</button>
               </div>
             </form>
           </div>
           <Pagination from={from} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} searchResult={searchResult} />
-          <div className='match-text-container'>
-            <span> When you're done browsing for dogs, click the button below to find your match!</span>
-            <Match
-              match={match}
-              handleMatchButton={handleMatchButton}
-              hasLikedDogs={Object.keys(likeDogs).length > 0}
-            />
+          <div>
+            <div className='text-container min-w-max'>
+              <Match
+                match={match}
+                handleMatchButton={handleMatchButton}
+                hasLikedDogs={Object.keys(likeDogs).length > 0}
+              />
+            </div>
           </div>
         </div>
-        {noMatchesFound ? (
-          <div className='no-match-container'>
-            <h1>No matches were found with this search.</h1>
-            <h1>Please try again.</h1>
-          </div>
-        ) : (
+        {
+          // getDogInfo.length > 0 ? (
           <div className='filter-card-container'>
             <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
           </div>
-        )}
-      </div>
+          // ) : (
+          //   <div className='no-match-container'>
+          //     <h1>No matches were found with this search.</h1>
+          //     <h1>Please try again.</h1>
+          //   </div>
+          // )
+        }
+      </div >
     </div >
   );
 };
