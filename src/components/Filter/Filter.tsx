@@ -374,16 +374,16 @@ const Filter = () => {
           </div>
         </div>
         {
-          // getDogInfo.length > 0 ? (
-          <div className='filter-card-container'>
-            <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
-          </div>
-          // ) : (
-          //   <div className='no-match-container'>
-          //     <h1>No matches were found with this search.</h1>
-          //     <h1>Please try again.</h1>
-          //   </div>
-          // )
+          getDogInfo.length > 0 ? (
+            <div className='filter-card-container'>
+              <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
+            </div>
+          ) : (
+            <div className='no-match-container'>
+              <h1>No matches were found with this search.</h1>
+              <h1>Please try again.</h1>
+            </div>
+          )
         }
       </div >
     </div >
