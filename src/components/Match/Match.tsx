@@ -1,14 +1,15 @@
 import React from 'react';
 import { Dog } from '../../types'
 import { useNavigate } from "react-router-dom";
-
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 interface MatchProps {
-  match: Dog,
   handleMatchButton: () => void,
   hasLikedDogs: boolean,
 }
-const Match = ({ match, handleMatchButton, hasLikedDogs }: MatchProps) => {
+const Match = ({ handleMatchButton, hasLikedDogs }: MatchProps) => {
   const navigate = useNavigate();
+  const match: Dog = useSelector((state: RootState) => state.filter.match)
   const { img, breed, name, zip_code, age } = match;
   const handleClick = async () => {
     if (hasLikedDogs) {

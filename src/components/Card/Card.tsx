@@ -2,25 +2,28 @@ import React from 'react';
 import emptyHeart from '../../images/empty-heart.svg';
 import redHeart from '../../images/red-heart.svg';
 import { Dog, LikeDog } from '../../types';
-
+import { setLikeDogs, } from '../../features/filterSlicer';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../redux/store';
 interface CardProps {
   dogObj: Dog;
-  likeDogs: LikeDog;
-  setLikeDogs: (likeDogs: LikeDog) => void;
-}
+};
 
-const Card = ({ dogObj, likeDogs, setLikeDogs }: CardProps) => {
+const Card = ({ dogObj }: CardProps) => {
+  const dispatch = useDispatch();
+  const likeDogs: LikeDog = useSelector((state: RootState) => state.filter.likeDogs);
+  const getDogInfo = useSelector((state: RootState) => state.filter.getDogInfo);
   const { id, breed, age, zip_code, name, img } = dogObj;
   let isLiked: boolean = likeDogs[id];
   const handleMatch = (): void => {
     if (!isLiked) {
       const updatedLikeDogs = { ...likeDogs, [id]: true };
-      setLikeDogs(updatedLikeDogs);
+      dispatch(setLikeDogs(updatedLikeDogs));
     }
     else {
       const updatedLikeDogs = { ...likeDogs }
       delete updatedLikeDogs[id];
-      setLikeDogs(updatedLikeDogs);
+      dispatch(setLikeDogs(updatedLikeDogs));
     }
   }
 

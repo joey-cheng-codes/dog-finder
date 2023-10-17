@@ -34,3 +34,4 @@ export type Params = {
 export type CheckedBreed = {
   [key: string]: boolean,
 };
+

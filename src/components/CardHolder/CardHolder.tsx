@@ -1,24 +1,24 @@
 import React from 'react';
 import Card from '../Card/Card'
 import { Dog, LikeDog } from '../../types';
-
-interface CardHolderProps {
-  getDogInfo: Dog[],
-  likeDogs: LikeDog,
-  setLikeDogs: (likeDogs: LikeDog) => void;
-}
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 
-const CardHolder = ({ getDogInfo, likeDogs, setLikeDogs }: CardHolderProps) => {
+// interface CardHolderProps {
+//   getDogInfo: Dog[],
+//   likeDogs: LikeDog,
+//   setLikeDogs: (likeDogs: LikeDog) => void;
+// }
 
-  const displayDog = (dogObj: Dog, index: number) => {
-    return (
-      <Card dogObj={dogObj} key={`card-${index}`} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
-    );
-  };
+
+const CardHolder = () => {
+  const getDogInfo = useSelector((state: RootState) => state.filter.getDogInfo)
   return (
     <div className='card-container'>
-      {getDogInfo.length > 0 && (getDogInfo.map(displayDog))}
+      {getDogInfo.length > 0 && getDogInfo.map((dogObj: Dog, index: number) => (
+        <Card dogObj={dogObj} key={`card-${index}`} />
+      ))}
     </div>
   )
 }

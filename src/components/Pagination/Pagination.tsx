@@ -1,13 +1,15 @@
 import React from 'react';
-import { SearchResult } from '../../types';
-
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 interface PaginationProps {
-  from: number,
-  searchResult: SearchResult,
   handleNextPage: () => void,
   handlePrevPage: () => void,
 }
-const Pagination = ({ from, searchResult, handleNextPage, handlePrevPage }: PaginationProps) => {
+const Pagination = ({ handleNextPage, handlePrevPage }: PaginationProps) => {
+  const from = useSelector((state: RootState) => state.filter.from);
+
+  const searchResult = useSelector((state: RootState) => state.filter.searchResult);
+
   return (
     <div className='pagination'>
       <div className="flex flex-col items-center dark:text-white" >

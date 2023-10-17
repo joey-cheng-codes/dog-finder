@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import dogFinder1 from '../../images/dog-finder1.png'
 import { useNavigate } from 'react-router-dom';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { setEmail, setFullName } from '../../features/loginSlicer';
+import { RootState } from '../../redux/store';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState('');
+  const email = useSelector((state: RootState) => state.login.email);
+  const fullName = useSelector((state: RootState) => state.login.fullName);
+  const dispatch = useDispatch();
   const loginHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -35,10 +38,10 @@ const Login = () => {
   };
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value);
+    dispatch(setEmail(e.target.value));
   };
   const handleFullName = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setFullName(e.target.value);
+    dispatch(setFullName(e.target.value));
   };
 
   return (
@@ -57,13 +60,13 @@ const Login = () => {
               <div>
                 <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
                 <div className="mt-2">
-                  <input onChange={handleEmail} placeholder='email address' id="email" name="email" type="email" autoComplete="email" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                  <input value={email} onChange={handleEmail} placeholder='email address' id="email" name="email" type="email" autoComplete="email" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                 </div>
               </div>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">Full Name</label>
                 <div className="mt-2">
-                  <input onChange={handleFullName} placeholder='full name' id="name" name="name" type="text" autoComplete="name" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                  <input value={fullName} onChange={handleFullName} placeholder='full name' id="name" name="name" type="text" autoComplete="name" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                 </div>
               </div>
               <div>

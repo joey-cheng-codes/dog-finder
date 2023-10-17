@@ -1,16 +1,17 @@
 import React from "react";
+import { setToggle } from "../../features/filterSlicer";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from '../../redux/store';
 
-interface ToggleProps {
-  toggle: string,
-  setToggle: (toggle: string) => void,
-}
-const Toggle = ({ toggle, setToggle }: ToggleProps) => {
+const Toggle = () => {
+  const dispatch = useDispatch();
+  const toggle = useSelector((state: RootState) => state.filter.toggle)
   const handleToggle = () => {
     if (toggle == 'asc') {
-      setToggle('desc')
+      dispatch(setToggle('desc'));
     }
     else {
-      setToggle('asc');
+      dispatch(setToggle('asc'));
     }
   }
   return (

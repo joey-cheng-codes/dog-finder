@@ -17,7 +17,9 @@ const mockCardProps = {
 }
 
 test('render a Card component with information provided', () => {
-  const { getByText } = render(<Card dogObj={mockCardProps.dogObj} likeDogs={mockCardProps.likeDogs} setLikeDogs={mockCardProps.setLikeDogs} />)
+  const { getByText } = render(<Card dogObj={mockCardProps.dogObj} />)
+
+  //likeDogs={mockCardProps.likeDogs} setLikeDogs={mockCardProps.setLikeDogs} 
 
   const dogBreedType = getByText('Breed: Affenpinscher');
   const dogAge = getByText('Age: 13');

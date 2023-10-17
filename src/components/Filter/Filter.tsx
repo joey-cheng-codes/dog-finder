@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import CardHolder from '../CardHolder/CardHolder';
 import Match from '../Match/Match';
 import Pagination from '../Pagination/Pagination';
@@ -6,46 +6,43 @@ import Toggle from '../Toggle/Toggle';
 import 'flowbite';
 import { LikeDog, SearchResult, DogMatch, Params, CheckedBreed, Dog } from '../../types'
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { setDogList, setGetDogInfo, setSearchResult, setBreedSearchQuery, setFilteredBreeds, setZip, setMaxAge, setMinAge, setFrom, setCheckedBreeds, setMatch } from '../../features/filterSlicer';
 
 const Filter = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [dogList, setDogList] = useState([]); // breed drop down 
-  const [getDogInfo, setGetDogInfo] = useState([]); // dog info (all info)
-  const [searchResult, setSearchResult] = useState<SearchResult>({
-    next: '',
-    resultIds: [],
-    total: 0,
-    prev: '',
-  }); // display search result that contains next, resultIds, total
+  const dogList = useSelector((state: RootState) => state.filter.dogList); // breed drop down 
+  const getDogInfo = useSelector((state: RootState) => state.filter.getDogInfo); // dog info (all info)
+  const searchResult = useSelector((state: RootState) => state.filter.searchResult) // display search result that contains: {
+  //   next: '',
+  //   resultIds: [],
+  //   total: 0,
+  //   prev: '',
+  // }); 
+  const breedSearchQuery = useSelector((state: RootState) => state.filter.breedSearchQuery)
+  const filteredBreeds = useSelector((state: RootState) => state.filter.filteredBreeds) //  for the search bar ..
 
-  const [breedSearchQuery, setBreedSearchQuery] = useState('');
-  const [filteredBreeds, setFilteredBreeds] = useState([]); // for the search bar ..
+  const zip = useSelector((state: RootState) => state.filter.zip)
+  const minAge = useSelector((state: RootState) => state.filter.minAge);
+  const maxAge = useSelector((state: RootState) => state.filter.maxAge);
+  const from = useSelector((state: RootState) => state.filter.from);
 
-  const [zip, setZip] = useState('');
+  const toggle = useSelector((state: RootState) => state.filter.toggle); // 'asc' initally
 
-  const [minAge, setMinAge] = useState('');
-  const [maxAge, setMaxAge] = useState('');
+  const checkedBreeds: CheckedBreed = useSelector((state: RootState) => state.filter.checkedBreeds); // for keeping track of what has been checked marked on breeds.
 
-  const [from, setFrom] = useState(0);
+  const likeDogs: LikeDog = useSelector((state: RootState) => state.filter.likeDogs);  // for keeping track of dogs we like
 
-  const [toggle, setToggle] = useState('asc');
-  const [checkedBreeds, setCheckedBreeds] = useState<CheckedBreed>({}) // for keeping track of what has been checked marked on breeds. 
-  const [likeDogs, setLikeDogs] = useState({}); // for keeping track of dogs we like
-  const [match, setMatch] = useState<Dog>({
-    id: '',
-    img: '',
-    name: '',
-    age: 0,
-    zip_code: '',
-    breed: '',
-  }); // object of match dog
+
   const size = 25;
   const breeds = dogList;
   let paramsEnd = '';
 
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
-    setBreedSearchQuery(query);
+    dispatch(setBreedSearchQuery(query));
 
     // Filter breeds based on the search query.
     const filtered = breeds.filter((breed) => breed.toLowerCase().includes(query.toLowerCase()));
@@ -58,19 +55,16 @@ const Filter = () => {
   const handleCheckedBreeds = (e: React.ChangeEvent<HTMLInputElement>) => {
     //unchecking a box
     let breedName = e.target.name;
-    // if the dog breed is already in the object, we will be removing it from the object
-    if (checkedBreeds[breedName]) {
-      delete checkedBreeds[breedName];
-      setCheckedBreeds({ ...checkedBreeds });
+    const updatedCheckedBreeds = { ...checkedBreeds };
+
+    if (updatedCheckedBreeds[breedName]) {
+      delete updatedCheckedBreeds[breedName];
     }
-    //checking a box
     else {
-      checkedBreeds[breedName] = true;
-      setCheckedBreeds({ ...checkedBreeds });
+      updatedCheckedBreeds[breedName] = true;
     }
+    dispatch(setCheckedBreeds(updatedCheckedBreeds));
   };
-
-
 
   useEffect(() => {
     const getBreeds = async () => {
@@ -84,9 +78,8 @@ const Filter = () => {
         }
         const data = await response.json();
         if (response.ok) {
-          console.log(data, 'is getting breeds working?');
-          setDogList(data);
-          setFilteredBreeds(data);
+          dispatch(setDogList(data));
+          dispatch(setFilteredBreeds(data));
         }
         else {
           throw new Error('An error has occurred. Could not get breed information.')
@@ -113,21 +106,21 @@ const Filter = () => {
   };
   // input field for zip code handler
   const handleZipcodeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setZip(e.target.value);
+    dispatch(setZip(e.target.value));
   }
 
   //age 
   const handleMinAgeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMinAge(e.target.value);
+    dispatch(setMinAge(e.target.value));
   }
   const handleMaxAgeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMaxAge(e.target.value);
+    dispatch(setMaxAge(e.target.value));
   }
 
   // next page
   const handleNextPage = () => {
     if (searchResult.total > from) {
-      setFrom(from + 25)
+      dispatch(setFrom(from + 25))
       paramsEnd = searchResult.next;
       return filteredDogs();
     }
@@ -136,7 +129,7 @@ const Filter = () => {
   // prev page
   const handlePrevPage = () => {
     if (from >= 25) {
-      setFrom(from - 25)
+      dispatch(setFrom(from - 25))
       paramsEnd = searchResult.prev;
       return filteredDogs();
     }
@@ -145,9 +138,6 @@ const Filter = () => {
   //handle form submission
   const handleFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // if (getDogInfo.length === 0) {
-    // paramsEnd = '';
-    // }
     filteredDogs();
   }
 
@@ -211,7 +201,7 @@ const Filter = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setSearchResult(data);
+        dispatch(setSearchResult(data));
         return getDogs(data);
       }
       else {
@@ -236,7 +226,7 @@ const Filter = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setGetDogInfo(data);
+        dispatch(setGetDogInfo(data));
       }
       else {
         throw new Error('An error has occurred. Failed to get dog information.')
@@ -290,7 +280,7 @@ const Filter = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setMatch(data[0]);
+        dispatch(setMatch(data[0]));
       }
       else {
         throw new Error('An error has occurred. Failed to get a match to dream dog.')
@@ -310,7 +300,7 @@ const Filter = () => {
       <div className='filter-card-container'>
         <div className='filter-container min-w-max'>
           <div className='toggle-container'>
-            <Toggle toggle={toggle} setToggle={setToggle} />
+            <Toggle />
           </div>
           <h3 className='md:font-bold text-black-700'> Enter your preferences:</h3>
           <div className='form-selection border-2 border-blue-200 p-2'>
@@ -362,11 +352,10 @@ const Filter = () => {
               </div>
             </form>
           </div>
-          <Pagination from={from} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} searchResult={searchResult} />
+          <Pagination handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} />
           <div>
             <div className='text-container min-w-max'>
               <Match
-                match={match}
                 handleMatchButton={handleMatchButton}
                 hasLikedDogs={Object.keys(likeDogs).length > 0}
               />
@@ -376,7 +365,7 @@ const Filter = () => {
         {
           getDogInfo.length > 0 ? (
             <div className='filter-card-container'>
-              <CardHolder getDogInfo={getDogInfo} likeDogs={likeDogs} setLikeDogs={setLikeDogs} />
+              <CardHolder />
             </div>
           ) : (
             <div className='no-match-container'>
